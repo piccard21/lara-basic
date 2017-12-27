@@ -9,6 +9,9 @@
 			<li class="nav-item active">
 				<a class="nav-link" href="{{ route("example.index") }}">Example</a>
 			</li>
+			<li class="nav-item active">
+				<a class="nav-link" href="{{ route("author.index") }}">Author</a>
+			</li>
 		</ul>
 	</div>
 </nav>

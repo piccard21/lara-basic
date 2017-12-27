@@ -221,7 +221,7 @@ Route::get('/example', 'ExampleController@index')->name('example');
 -  open route  [http://127.0.0.1:8000/example/](http://127.0.0.1:8000/example/)
 
 
-## CRUD
+## CRUD with a single model
 
 ### Route
 
@@ -325,7 +325,7 @@ php artisan db:seed
 ```
 
 
-##### multiple seed using faker
+##### multiple seeds using faker
 
 - to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
 - change seeder to:
@@ -564,7 +564,7 @@ public function destroy(Request $request, Example $example) {
 
 
 
-## Pagination
+## Pagination with BS4
 
 
 - **ExampleController**
@@ -574,7 +574,7 @@ public function destroy(Request $request, Example $example) {
 		$examples = Example::paginate(10);
 ``` 
 	
-- **bootstrap.app.php**
+- **bootstrap/app.php**
 
 ```
 /* BS-4 pagination*/
@@ -590,22 +590,150 @@ Illuminate\Pagination\AbstractPaginator::defaultSimpleView("pagination::simple-b
 ``` 
    	
 
+## CRUD with multiple models
+
+- author ++  book +- publisher 
+
+### move models to app/Models
+
+- create **app/Models/**
+- **composer.json**
+
+```     
+"autoload": {
+    "classmap": [
+        ...
+        "app/Models"
+    ],
+``` 
+
+
+##  Controllers, Models & Migrations
+
+### Long way
+```      
+php artisan make:controller AuthorController -r
+php artisan make:controller BookController -r
+php artisan make:controller PublisherController -r
+ 
+php artisan make:model Author -m
+php artisan make:model Book -m
+php artisan make:model Publisher -m
+```      
+
+### Short way
+- Generate a migration, factory, and resource controller for the model
+
+```      
+php artisan make:model Author -a
+php artisan make:model Book -a
+php artisan make:model Publisher -a
+```      
+
+- move the 3 models into **app/Models**
+
+### Prepare Models & Tables 
+
+- example: *Author*
+ 
+- **author-migration**
+```
+public function up()
+{
+    Schema::create('authors', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('lastname');
+        $table->string('forename');
+        $table->timestamps();
+    });
+}      
+```      
+- author-model
+```    
+class Author extends Model
+{
+	protected $fillable = ['lastname','forename'];
+}
+``` 
+- edit author-factory 
+```    
+$factory->define(App\Author::class, function (Faker $faker) {
+    return [
+	    'lastname' => $faker->lastName,
+	    'forename' => $faker->firstName,
+    ];
+});
+```    
+   
+- create seeder   
+```    
+php artisan make:seeder AuthorsTableSeeder 
+```    
+ 
+```    
+public function run()
+{ 
+	    factory(App\Author::class, 50)->create();
+}
+```    
+
+
+- add seeder to **seeds/DatabaseSeeder.php**
+
+```    
+$this->call(AuthorsTableSeeder::class);
+```    
+
+- seed
+```    
+php artisan db:seed
+```    
+
+
+### View & Controller 
+
+- copy **example.blade.index.php** to **author.blade.index.php** & replace example-variable
+- copy index() from example
+
+### set route
+
+```    
+Route::resource( '/author', 'AuthorController' ); 
+```    
+
+- [goto](http://127.0.0.1:8000/author) 
+- everything should workmeans the model was found 
+
+
+
+## create relationships
+
 
 ## TODO 
+- author ++ book +- publisher
+
+
 - move models to folder
-- Auth
-- Request Error Msgs + Forms
-- Middle 
- 
-
-
 - factory for 1:n, n:m
-- to add more than one row you can use a [factory](https://laravel.com/docs/5.5/seeding#using-model-factories)
- 
-- migration simple
-- Controller
+    - to add more than one row you can use a [factory](https://laravel.com/docs/5.5/seeding#using-model-factories)
 - 1:n
 - n:m
-- alter
 - timestamps: false
-- fillable/???? 
+- fillable/protected  
+- sortieren
+
+- Auth
+    - migration alter  
+- Request Error Msgs + Forms
+- Middle 
+- Events
+- View::share
+- API
+- AJax
+- Exception-Handling
+- ServiceProvider
+- app-> extend
+- queryScopes
+- Tests
+- Language
+- multiple DBs
