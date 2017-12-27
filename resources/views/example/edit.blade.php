@@ -13,7 +13,4 @@
 			<button type="submit" class="btn btn-primary">Update</button>
 		</form>
 	</div>
-
-
-	<h1>PUT/DELETE in form</h1>
 @endsection
