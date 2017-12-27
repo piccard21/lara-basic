@@ -692,7 +692,7 @@ php artisan db:seed
 
 ### View & Controller 
 
-- copy **example.blade.index.php** to **author.blade.index.php** & replace example-variable
+- copy **example/index.blade.php** to **author/index.blade.php** & replace example-variable
 - copy index() from example
 
 ### set route
