@@ -701,23 +701,28 @@ php artisan db:seed
 Route::resource( '/author', 'AuthorController' ); 
 ```    
 
-- [goto](http://127.0.0.1:8000/author) 
-- everything should workmeans the model was found 
+- [goto](http://127.0.0.1:8000/author) author.index to test if everything worked
+- ok ... so let's rollback
+
+```    
+php artisan migrate:rollback 
+```    
+
 
 
 
 ## create relationships
+- setup other models
 
 
 ## TODO 
 - author ++ book +- publisher
 
-
-- move models to folder
-- factory for 1:n, n:m
-    - to add more than one row you can use a [factory](https://laravel.com/docs/5.5/seeding#using-model-factories)
-- 1:n
-- n:m
+ 
+- model - special pivot table
+- fk
+    - https://laravel.com/docs/5.5/migrations#foreign-key-constraints
+- factory for 1:n, n:m  
 - timestamps: false
 - fillable/protected  
 - sortieren
@@ -725,6 +730,7 @@ Route::resource( '/author', 'AuthorController' );
 - Auth
     - migration alter  
 - Request Error Msgs + Forms
+
 - Middle 
 - Events
 - View::share
