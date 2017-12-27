@@ -12,7 +12,8 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
-		$examples = Example::all();
+//		$examples = Example::all();
+		$examples = Example::paginate(5);
 //	    return view( 'example.index', compact( 'examples' ) );
 		return view('example.index')->with('examples', $examples);
 	}
