@@ -1,15 +1,5 @@
 # lara-basic
 
-## TODO
-- Faker
-- Seed
-- Auth
-- Request Error Msgs -> Jeff
-- Middle
-- move models to folder
-- alle Formen um Paras an Blade weiterzugeben
-
-
 ## Links
 
 [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
@@ -58,12 +48,12 @@ npm uninstall bootstrap-sass --save-dev
 npm install bootstrap@4.0.0-beta.2 popper.js --save-dev
 ```
 
-* sass/app.scss
+- sass/app.scss
 ```
 @import "node_modules/bootstrap/scss/bootstrap";
 ```
 
-* js/bootstrap.js:
+- js/bootstrap.js:
 ```
 try {
     window.$ = window.jQuery = require('jquery');
@@ -73,7 +63,7 @@ try {
 } catch (e) {}
 ```
 
-* sass/ _variables.scss
+- sass/ _variables.scss
 ```
 $font-size-base: 1rem;
 ```
@@ -83,12 +73,12 @@ $font-size-base: 1rem;
 
 ## Layout-View 
 
-* create 
+- create 
 	* **resources/views/layout/app.blade.php** 
 
 ### Main skeleton
 
-* in **layout/app.blade.php**
+- in **layout/app.blade.php**
 
 ```
 <!DOCTYPE html>
@@ -132,7 +122,7 @@ $font-size-base: 1rem;
 ```
 
 ### Errors & messages
-* layout/errors.blade.php
+- layout/errors.blade.php
 
 ```
 @if(count($errors))
@@ -149,7 +139,7 @@ $font-size-base: 1rem;
     </div>
 @endif
 ```
-* layout/message.blade.php
+- layout/message.blade.php
 
 ```
 @if ($flash = session('message'))
@@ -165,7 +155,7 @@ $font-size-base: 1rem;
 @endif
 ```
 
-* layout/nav.blade.php 
+- layout/nav.blade.php 
 ```
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<a class="navbar-brand" href="{{ route("home") }}">Laravel Basic</a>
@@ -185,25 +175,25 @@ $font-size-base: 1rem;
 
 ### Layout-view with example controller
 
-* create Example-Controller
+- create Example-Controller
 ``` 
 php artisan make:controller ExampleController -r
 ``` 
 
-* you can also create the model in the command as well:
+- you can also create the model in the command as well:
 ``` 
 php artisan make:controller ExampleController -r -m Example
 ``` 
 
-* open it and add to *index()*
+- open it and add to *index()*
 
 ```
  return view( 'example.index');
 ``` 
 
-* create example-view **views/example/index.blade.php**
+- create example-view **views/example/index.blade.php**
 
-	* add BS4-code
+	- add BS4-code
 	
 ```
 @extends('layout.app')
@@ -224,27 +214,27 @@ php artisan make:controller ExampleController -r -m Example
 @endsection
 ```
 
-* set route in **routes/web.php**
+- set route in **routes/web.php**
 
 ```
 Route::get('/example', 'ExampleController@index')->name('example');
 ```
 
-*  open route  [http://127.0.0.1:8000/example/](http://127.0.0.1:8000/example/)
+-  open route  [http://127.0.0.1:8000/example/](http://127.0.0.1:8000/example/)
 
 
 ## CRUD
 
 ### Route
 
-* the easiest way is to create a resourceful route
-* **routes/web.php**
+- the easiest way is to create a resourceful route
+- **routes/web.php**
 
 ```
 Route::resource('/example', 'ExampleController');
 ```
 
-* check routes
+- check routes
 
 ```
 php artisan route:list
@@ -252,20 +242,20 @@ php artisan route:list
 
 ### Migration
 
-* if you didn't use **-m** when the controller was created, create a model now
-	* with the **-m** option you get the migration file as well
+- if you didn't use **-m** when the controller was created, create a model now
+	- with the **-m** option you get the migration file as well
 
 ```
 php artisan make:model Example -m
 ```
 
-* otherwise create the migration-file:
+- otherwise create the migration-file:
 
 ```
 php artisan make:migration create_examples_table
 ```
 
-* open **database/migrations/*create_examples_table.php**
+- open **database/migrations/*create_examples_table.php**
                                                         
 ```
 Schema::create('examples', function (Blueprint $table) {
@@ -275,8 +265,8 @@ Schema::create('examples', function (Blueprint $table) {
 });
 ```
 
-* add DB-credentials to **.env**
-* run migration
+- add DB-credentials to **.env**
+- run migration
 
 ```
 php artisan migrate
@@ -285,7 +275,7 @@ php artisan migrate
 
 ### Model
 
-* open *app/Example.php* and make *text* fillable
+- open *app/Example.php* and make *text* fillable
                                                         
 ```
 class Example extends Model {
@@ -294,13 +284,13 @@ class Example extends Model {
 ```
 #### Seeder                     
 
-* create a seeder
+- create a seeder
                          
 ```
 php artisan make:seeder ExamplesTableSeeder                                              
 ```
 
-* you will find the seeder in *database/seeds*
+- you will find the seeder in *database/seeds*
 
 ##### single seed
 
@@ -316,13 +306,13 @@ class ExamplesTableSeeder extends Seeder {
 	}
 }
 ```
-* run it:
+- run it:
 
 ```
 php artisan db:seed --class=ExamplesTableSeeder
 ```
 
-* ... or open *seeds/DatabaseSeeder.php* and add our seeder 
+- ... or open *seeds/DatabaseSeeder.php* and add our seeder 
 
 ```
 public function run()
@@ -339,8 +329,8 @@ php artisan db:seed
 
 ##### multiple seed
 
-* to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
-* change seeder to:
+- to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
+- change seeder to:
 
 ```
 use Illuminate\Database\Seeder;
@@ -369,7 +359,7 @@ php artisan db:seed
 
 #### index
 
-* *example/index.blade.php*
+- *example/index.blade.php*
 
 ```
 @extends('layout.app')
@@ -403,7 +393,7 @@ php artisan db:seed
 
 #### create
 
-* *example/create.blade.php*
+- *example/create.blade.php*
 
 ```
 @extends('layout.app')
@@ -426,7 +416,7 @@ php artisan db:seed
 
 #### edit
 
-* *example/edit.blade.php*
+- *example/edit.blade.php*
 
 ```
 @extends('layout.app')
@@ -448,7 +438,7 @@ php artisan db:seed
 
 #### show
 
-* *example/show.blade.php*
+- *example/show.blade.php*
 
 ```
 @extends('layout.app')
@@ -525,6 +515,14 @@ public function store(Request $request) {
 #### update
 ``` 
 ```
+
+
+## TODO 
+- move models to folder
+- Auth
+- Request Error Msgs + Forms
+- Middle 
+
 
 - DELET muss form werden 
 	- siehe bello

@@ -11,11 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get( '/', function () {
+	return view( 'welcome' );
+} )->name( 'home' );
 
 //Route::get('/example', 'ExampleController@index')->name('example');
 
 
-Route::resource('/example', 'ExampleController');
+Route::resource( '/example', 'ExampleController' );
