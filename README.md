@@ -49,4 +49,33 @@ APP_DEBUG=true
 	.copy('resources/assets/img', 'public/img')
 ```
 
+## BS4
+
+```
+npm uninstall bootstrap-sass --save-dev
+npm install bootstrap@4.0.0-beta.2 popper.js --save-dev
+```
+
+* sass/app.scss
+```
+@import "node_modules/bootstrap/scss/bootstrap";
+```
+
+* js/bootstrap.js:
+```
+try {
+    window.$ = window.jQuery = require('jquery');
+    window.Popper = require('popper.js');
+
+    require('bootstrap');
+} catch (e) {}
+```
+
+* sass/ _variables.scss
+```
+$font-size-base: 1rem;
+```
+... or better uncomment everything
+
+
 
