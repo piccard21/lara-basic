@@ -13,9 +13,7 @@
 ## Links
 
 [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
-
-[Laravel5 with BS4]([https://medium.com/@tadaspaplauskas/using-bootstrap-4-with-laravel-5-3-8d4efb8b82bf])
-
+ 
  
 ## Debug Bar
 [github](https://github.com/barryvdh/laravel-debugbar) 
@@ -79,8 +77,7 @@ try {
 ```
 $font-size-base: 1rem;
 ```
-... or better, uncomment everything
-
+... or just uncomment everything
 
 
 
@@ -89,7 +86,7 @@ $font-size-base: 1rem;
 * create 
 	* **resources/views/layout/app.blade.php** 
 
-### Errors & messages
+### Main skeleton
 
 * in **layout/app.blade.php**
 
@@ -134,6 +131,7 @@ $font-size-base: 1rem;
 </html>
 ```
 
+### Errors & messages
 * layout/errors.blade.php
 
 ```
@@ -167,11 +165,25 @@ $font-size-base: 1rem;
 @endif
 ```
 
-* layout/nav.blade.php
-	* copy from [getbootstrap.com](https://getbootstrap.com/docs/4.0/components/navbar/)
+* layout/nav.blade.php 
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<a class="navbar-brand" href="{{ route("home") }}">Laravel Basic</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item active">
+				<a class="nav-link" href="{{ route("example.index") }}">Example</a>
+			</li> 
+		</ul>
+	</div>
+</nav>
+```
 
-### test layout-view with example controller
+### Layout-view with example controller
 
 * create Example-Controller
 ``` 
@@ -183,7 +195,7 @@ php artisan make:controller ExampleController -r
 php artisan make:controller ExampleController -r -m Example
 ``` 
 
-* open it and add to index()
+* open it and add to *index()*
 
 ```
  return view( 'example.index');
@@ -253,7 +265,7 @@ php artisan make:model Example -m
 php artisan make:migration create_examples_table
 ```
 
-* open **database/migrations/*create_examples_table.php**:
+* open **database/migrations/*create_examples_table.php**
                                                         
 ```
 Schema::create('examples', function (Blueprint $table) {
@@ -325,7 +337,7 @@ php artisan db:seed
 ```
 
 
-##### factory seed
+##### multiple seed
 
 * to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
 * change seeder to:
@@ -339,9 +351,9 @@ use Faker\Factory as Faker;
 class ExamplesTableSeeder extends Seeder { 
 	public function run() { 
 		$faker = Faker::create();
-		foreach(range(1, 21) as $index) {
+		foreach(range(1, 10) as $index) {
 			DB::table('examples')->insert([
-				'text' => $faker->sentence($nbWords = 6, $variableNbWords = true)
+				'text' => $faker->sentence(7)
 			]);
 		}
 	}

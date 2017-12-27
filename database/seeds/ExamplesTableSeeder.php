@@ -19,7 +19,7 @@ class ExamplesTableSeeder extends Seeder {
 		$faker = Faker::create();
 		foreach(range(1, 10) as $index) {
 			DB::table('examples')->insert([
-				'text' => $faker->sentence($nbWords = 6, $variableNbWords = true)
+				'text' => $faker->sentence(7)
 			]);
 		}
 	}
