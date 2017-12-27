@@ -4,6 +4,10 @@
 - Faker
 - Seed
 - Auth
+- Request Error Msgs -> Jeff
+- Middle
+- move models to folder
+- alle Formen um Paras an Blade weiterzugeben
 
 
 ## Links
@@ -170,8 +174,13 @@ $font-size-base: 1rem;
 ### test layout-view with example controller
 
 * create Example-Controller
-```
+``` 
 php artisan make:controller ExampleController -r
+``` 
+
+* you can also create the model in the command as well:
+``` 
+php artisan make:controller ExampleController -r -m Example
 ``` 
 
 * open it and add to index()
@@ -212,3 +221,313 @@ Route::get('/example', 'ExampleController@index')->name('example');
 *  open route  [http://127.0.0.1:8000/example/](http://127.0.0.1:8000/example/)
 
 
+## CRUD
+
+### Route
+
+* the easiest way is to create a resourceful route
+* **routes/web.php**
+
+```
+Route::resource('/example', 'ExampleController');
+```
+
+* check routes
+
+```
+php artisan route:list
+```
+
+### Migration
+
+* if you didn't use **-m** when the controller was created, create a model now
+	* with the **-m** option you get the migration file as well
+
+```
+php artisan make:model Example -m
+```
+
+* otherwise create the migration-file:
+
+```
+php artisan make:migration create_examples_table
+```
+
+* open **database/migrations/*create_examples_table.php**:
+                                                        
+```
+Schema::create('examples', function (Blueprint $table) {
+    $table->increments('id');
+    $table->string('text');
+    $table->timestamps();
+});
+```
+
+* add DB-credentials to **.env**
+* run migration
+
+```
+php artisan migrate
+```
+
+
+### Model
+
+* open *app/Example.php* and make *text* fillable
+                                                        
+```
+class Example extends Model {
+	protected $fillable = ['text'];
+}                                                       
+```
+#### Seeder                     
+
+* create a seeder
+                         
+```
+php artisan make:seeder ExamplesTableSeeder                                              
+```
+
+* you will find the seeder in *database/seeds*
+
+##### single seed
+
+```
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class ExamplesTableSeeder extends Seeder {
+	public function run() {
+		DB::table('examples')->insert([
+			'text' => str_random(121)
+		]);
+	}
+}
+```
+* run it:
+
+```
+php artisan db:seed --class=ExamplesTableSeeder
+```
+
+* ... or open *seeds/DatabaseSeeder.php* and add our seeder 
+
+```
+public function run()
+{
+    // $this->call(UsersTableSeeder::class);
+    $this->call(ExamplesTableSeeder::class);
+}
+```
+
+```
+php artisan db:seed
+```
+
+
+##### factory seed
+
+* to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
+* change seeder to:
+
+```
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use App\Example;
+use Faker\Factory as Faker;
+
+class ExamplesTableSeeder extends Seeder { 
+	public function run() { 
+		$faker = Faker::create();
+		foreach(range(1, 21) as $index) {
+			DB::table('examples')->insert([
+				'text' => $faker->sentence($nbWords = 6, $variableNbWords = true)
+			]);
+		}
+	}
+}
+```
+
+```
+php artisan db:seed
+```
+
+
+### View
+
+#### index
+
+* *example/index.blade.php*
+
+```
+@extends('layout.app')
+
+@section('content')
+	<div class="container">
+		<div>
+			<a class="btn btn-default pull-right" href="{{ route("example.create") }}">
+				<i class="fa fa-plus fa-1x"></i>
+			</a>
+		</div>
+
+		<ul class="list-group">
+			@foreach($examples as $example)
+				<li class="list-group-item">{{ $example->text }}
+					<a class="pull-right" href="{{ route("example.destroy", ["example" => $example->id]) }}">
+						<i class="fa fa-trash-o fa-1x"></i>
+					</a>
+					<a class="pull-right" href="{{ route("example.edit", ["example" => $example->id]) }}">
+						<i class="fa fa-pencil fa-1x"></i>
+					</a>
+					<a class="pull-right" href="{{ route("example.show", ["example" => $example->id]) }}">
+						<i class="fa fa-eye fa-1x"></i>
+					</a>
+				</li>
+			@endforeach
+		</ul>
+	</div>
+@endsection
+``` 
+
+#### create
+
+* *example/create.blade.php*
+
+```
+@extends('layout.app')
+
+@section('content')
+	<div class="container">
+		<form method="POST" action="{{route('example.store')}}">
+			{{ csrf_field() }}
+			<div class="form-group">
+				<label for="exampleText">Text</label>
+				<input type="text" class="form-control" id="exampleText" placeholder="add text" name="text">
+				<small id="textHelp" class="form-text text-muted">Don't eat the yellow snow</small>
+			</div>
+			<button type="submit" class="btn btn-primary">Add</button>
+		</form>
+	</div>
+@endsection
+```
+
+
+#### edit
+
+* *example/edit.blade.php*
+
+```
+@extends('layout.app')
+
+@section('content')
+	<div class="container">
+		<form>
+			<div class="form-group">
+				<label for="exampleText">Text</label>
+				<input type="text" class="form-control" id="exampleText" value="{{ $example->text  }}">
+				<small id="textHelp" class="form-text text-muted">Don't eat the yellow snow</small>
+			</div>
+			<button type="submit" class="btn btn-primary">Update</button>
+		</form>
+	</div>
+@endsection
+```
+
+
+#### show
+
+* *example/show.blade.php*
+
+```
+@extends('layout.app')
+
+@section('content')
+	<div class="container">
+		<div class="card" style="width: 20rem;">
+			<div class="card-body">
+				<h4 class="card-title">Example: {{ $example->id }}</h4>
+				<p class="card-text">{{ $example->text }}</p>
+				<a href="{{ route("example.index") }}" class="btn btn-primary">back</a>
+			</div>
+		</div>
+	</div>
+@endsection
+``` 
+
+
+
+### Controller
+
+#### index
+```
+public function index()
+{
+	$examples = Example::all(); 
+//	return view( 'example.index', compact( 'examples' ) );
+    return view( 'example.index')->with('examples', $examples);
+}
+```
+
+#### create
+```
+public function create()
+{
+    return view( 'example.create' );
+}
+```
+
+#### edit
+```
+public function edit(Request $request, Example $example) {
+	return view('example.edit')->with([
+		'example' => $example
+	]);
+}
+```
+
+
+#### show
+```
+public function show(Request $request, Example $example) {
+	return view('example.show')->with([
+		'example' => $example
+	]);
+}
+```
+
+#### store
+```
+public function store(Request $request) {
+	$this->validate( $request, [
+		'text' => 'required|min:1|max:121',
+	] );
+	
+	Example::create( [
+		'text'    => $request->input( 'text' )
+	] );
+	
+	return redirect()->route( 'example.index' )->with( 'message', 'Text created successfully' );
+}
+```
+
+#### update
+``` 
+```
+
+- DELET muss form werden 
+	- siehe bello
+- List-group etc neu & schöner, s.d. wiederverwendbar
+	-> in README neu pasten
+
+
+- factory for 1:n, n:m
+- to add more than one row you can use a [factory](https://laravel.com/docs/5.5/seeding#using-model-factories)
+ 
+- migration simple
+- Controller
+- 1:n
+- n:m
+- alter
+- timestamps: false
+- fillable/????
+- models - folder 

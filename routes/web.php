@@ -15,4 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/example', 'ExampleController@index')->name('example');
+//Route::get('/example', 'ExampleController@index')->name('example');
+
+
+Route::resource('/example', 'ExampleController');

@@ -2,15 +2,26 @@
 
 @section('content')
 	<div class="container">
-		<div class="card" style="width: 20rem;">
-			<div class="card-body">
-				<h4 class="card-title">Card title</h4>
-				<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-				<p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-					card's content.</p>
-				<a href="#" class="card-link">Card link</a>
-				<a href="#" class="card-link">Another link</a>
-			</div>
+		<div>
+			<a class="btn btn-default pull-right" href="{{ route("example.create") }}">
+				<i class="fa fa-plus fa-1x"></i>
+			</a>
 		</div>
+
+		<ul class="list-group">
+			@foreach($examples as $example)
+				<li class="list-group-item">{{ $example->text }}
+					<a class="pull-right" href="{{ route("example.destroy", ["example" => $example->id]) }}">
+						<i class="fa fa-trash-o fa-1x"></i>
+					</a>
+					<a class="pull-right" href="{{ route("example.edit", ["example" => $example->id]) }}">
+						<i class="fa fa-pencil fa-1x"></i>
+					</a>
+					<a class="pull-right" href="{{ route("example.show", ["example" => $example->id]) }}">
+						<i class="fa fa-eye fa-1x"></i>
+					</a>
+				</li>
+			@endforeach
+		</ul>
 	</div>
 @endsection
