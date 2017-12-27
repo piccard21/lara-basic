@@ -1,16 +1,45 @@
 @extends('layout.app')
 
 @section('content')
-	<div class="container">
-		<div class="card" style="width: 20rem;">
-			<div class="card-body">
-				<h4 class="card-title">Card title</h4>
-				<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-				<p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-					card's content.</p>
-				<a href="#" class="card-link">Card link</a>
-				<a href="#" class="card-link">Another link</a>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="mb-2">
+            <a class="btn btn-success" href="{{ route("example.create") }}">
+                <i class="fa fa-plus fa-lg"></i> Add
+            </a>
+        </div>
+
+        <div>
+            <ul class="list-group">
+                @foreach($examples as $example)
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <span class="mr-auto">
+                            {{ $example->text }}
+                            </span>
+                            <span>
+                                {{--<a class="btn btn-danger" href="{{ route("example.destroy", ["example" => $example->id]) }}">--}}
+                                {{--<i class="fa fa-trash-o fa-1x"></i>--}}
+                                {{--</a>--}}
+                                <a class="btn btn-warning"
+                                   href="{{ route("example.edit", ["example" => $example->id]) }}">
+                                    <i class="fa fa-pencil fa-1x"></i>
+                                </a>
+                                <a class="btn btn-info" href="{{ route("example.show", ["example" => $example->id]) }}">
+                                    <i class="fa fa-eye fa-1x"></i>
+                                </a>
+                                <span class="d-inline-block">
+                                    <form action="{{ route('example.destroy',  ["example" => $example->id]) }}"
+                                          method="POST">
+                                        {{ method_field('DELETE') }}
+                                        {{ csrf_field() }}
+                                        <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i class="fa fa-trash-o fa-1x"></i></button>
+                                    </form>
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
 @endsection
