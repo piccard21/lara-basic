@@ -1,7 +1,5 @@
 # lara-basic
 
-## Links
-
 [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
  
  
@@ -180,7 +178,7 @@ $font-size-base: 1rem;
 php artisan make:controller ExampleController -r
 ``` 
 
-- you can also create the model in the command as well:
+- you can also create the model inside the command as well:
 ``` 
 php artisan make:controller ExampleController -r -m Example
 ``` 
@@ -327,7 +325,7 @@ php artisan db:seed
 ```
 
 
-##### multiple seed
+##### multiple seed using faker
 
 - to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
 - change seeder to:
@@ -365,29 +363,47 @@ php artisan db:seed
 @extends('layout.app')
 
 @section('content')
-	<div class="container">
-		<div>
-			<a class="btn btn-default pull-right" href="{{ route("example.create") }}">
-				<i class="fa fa-plus fa-1x"></i>
-			</a>
-		</div>
+    <div class="container">
+        <div class="mb-2">
+            <a class="btn btn-success" href="{{ route("example.create") }}">
+                <i class="fa fa-plus fa-lg"></i> Add
+            </a>
+        </div>
 
-		<ul class="list-group">
-			@foreach($examples as $example)
-				<li class="list-group-item">{{ $example->text }}
-					<a class="pull-right" href="{{ route("example.destroy", ["example" => $example->id]) }}">
-						<i class="fa fa-trash-o fa-1x"></i>
-					</a>
-					<a class="pull-right" href="{{ route("example.edit", ["example" => $example->id]) }}">
-						<i class="fa fa-pencil fa-1x"></i>
-					</a>
-					<a class="pull-right" href="{{ route("example.show", ["example" => $example->id]) }}">
-						<i class="fa fa-eye fa-1x"></i>
-					</a>
-				</li>
-			@endforeach
-		</ul>
-	</div>
+        <div>
+            <ul class="list-group">
+                @foreach($examples as $example)
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <span class="mr-auto">
+                            {{ $example->text }}
+                            </span>
+                            <span>
+                                {{--<a class="btn btn-danger" href="{{ route("example.destroy", ["example" => $example->id]) }}">--}}
+                                {{--<i class="fa fa-trash-o fa-1x"></i>--}}
+                                {{--</a>--}}
+                                <a class="btn btn-warning"
+                                   href="{{ route("example.edit", ["example" => $example->id]) }}">
+                                    <i class="fa fa-pencil fa-1x"></i>
+                                </a>
+                                <a class="btn btn-info" href="{{ route("example.show", ["example" => $example->id]) }}">
+                                    <i class="fa fa-eye fa-1x"></i>
+                                </a>
+                                <span class="d-inline-block">
+                                    <form action="{{ route('example.destroy',  ["example" => $example->id]) }}"
+                                          method="POST">
+                                        {{ method_field('DELETE') }}
+                                        {{ csrf_field() }}
+                                        <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i class="fa fa-trash-o fa-1x"></i></button>
+                                    </form>
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
 @endsection
 ``` 
 
@@ -514,20 +530,43 @@ public function store(Request $request) {
 
 #### update
 ``` 
+public function update(Request $request, Example $example) {
+    $this->validate( $request, [
+        'text' => 'required|min:1|max:121'
+    ] );
+    
+    $example->text = $request->input( 'text' );
+    
+    if ( $example->save() ) {
+        return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
+    } else {
+        return redirect()->back()->withErrors( [
+            "message" => "Board couldn't be updated"
+        ] );
+    }
+}
 ```
 
+
+#### delete
+``` 	
+public function destroy(Request $request, Example $example) {
+    if ( $example->delete() ) {
+        return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
+    } else {
+        return redirect()->back()->withErrors( [
+            "message" => "Example couldn't be deleted"
+        ] );
+    }
+}
+```
 
 ## TODO 
 - move models to folder
 - Auth
 - Request Error Msgs + Forms
 - Middle 
-
-
-- DELET muss form werden 
-	- siehe bello
-- List-group etc neu & schöner, s.d. wiederverwendbar
-	-> in README neu pasten
+ 
 
 
 - factory for 1:n, n:m
@@ -539,5 +578,4 @@ public function store(Request $request) {
 - n:m
 - alter
 - timestamps: false
-- fillable/????
-- models - folder 
+- fillable/???? 
