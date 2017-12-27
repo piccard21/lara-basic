@@ -549,6 +549,7 @@ public function update(Request $request, Example $example) {
 
 
 #### delete
+
 ``` 	
 public function destroy(Request $request, Example $example) {
     if ( $example->delete() ) {
@@ -560,6 +561,35 @@ public function destroy(Request $request, Example $example) {
     }
 }
 ```
+
+
+
+## Pagination
+
+
+- **ExampleController**
+
+``` 	
+//		$examples = Example::all();
+		$examples = Example::paginate(10);
+``` 
+	
+- **bootstrap.app.php**
+
+```
+/* BS-4 pagination*/
+Illuminate\Pagination\AbstractPaginator::defaultView("pagination::bootstrap-4");
+Illuminate\Pagination\AbstractPaginator::defaultSimpleView("pagination::simple-bootstrap-4");
+```
+	
+
+- **views/example/index.blade.php**
+
+``` 	
+<div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
+``` 
+   	
+
 
 ## TODO 
 - move models to folder

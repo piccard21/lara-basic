@@ -41,5 +41,8 @@
                 @endforeach
             </ul>
         </div>
+        <div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
     </div>
+
+
 @endsection
