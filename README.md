@@ -796,7 +796,42 @@ public function up()
 
 
 ## create relationships
-- setup other models
+
+### models
+- author
+```  
+class Author extends Model
+ {
+    protected $fillable = ['lastname','forename'];
+    
+    public function books()
+    {
+        return $this->belongsToMany('App\Book');
+    }
+    
+ }
+
+```  
+
+
+- book
+```  
+class Book extends Model {
+	
+	protected $fillable = ['title', 'published_at', 'publisher_id'];
+	
+	public function publisher() {
+		return $this->belongsTo('App\Publisher');
+	}
+	
+	public function authors() {
+		return $this->belongsToMany('App\Author');
+	}
+}
+```  
+ 
+
+
 
 ### factories
 ```  
