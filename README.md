@@ -634,9 +634,9 @@ Illuminate\Pagination\AbstractPaginator::defaultSimpleView("pagination::simple-b
 ``` 
 
 
-##  Controllers, Models & Migrations
+###  Controllers, Models & Migrations
 
-### Long way
+#### Long way
 ```      
 php artisan make:controller AuthorController -r
 php artisan make:controller BookController -r
@@ -645,9 +645,13 @@ php artisan make:controller PublisherController -r
 php artisan make:model Author -m
 php artisan make:model Book -m
 php artisan make:model Publisher -m
+
+php artisan make:factory -m Author AuthorFactory
+php artisan make:factory -m Book BookFactory
+php artisan make:factory -m Publisher PublisherFactory
 ```      
 
-### Short way
+#### Short way
 - Generate a migration, factory, and resource controller for the model
 
 ```      
@@ -741,12 +745,17 @@ php artisan migrate:rollback
 - book
 
 ```
-$table->increments('id');
-$table->string('title');
-$table->date('published_at');
-$table->integer('publisher_id')->unsigned();
-$table->foreign('publisher_id')->references('id')->on('publishers');
-$table->timestamps();     
+public function up()
+{
+    Schema::create('books', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('title');
+        $table->date('published_at');
+        $table->integer('publisher_id')->unsigned();
+        $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');
+        $table->timestamps();
+    });
+}    
 ```    
 
 - publisher
@@ -758,7 +767,7 @@ public function up()
         $table->string('name');
         $table->timestamps();
     });
-} 
+}
 ```    
 
 - author_book
@@ -767,22 +776,21 @@ php artisan make:migration create_author_book --create=author_book
 ```    
 
 ```    
-	
 public $timestamps = false;
-	
-	
-public function up()
-{
-	$table->integer('author_id')->unsigned()->index();
-	$table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
-	
-	$table->integer('book_id')->unsigned()->index();
-	$table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
-} 
+		
+public function up() {
+    Schema::create('author_book', function(Blueprint $table) {
+        $table->integer('author_id')->unsigned()->index();
+        $table->integer('book_id')->unsigned()->index();
+
+        $table->primary(['author_id', 'book_id']);
+
+        $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
+        $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+    });
+}	
 ```    
-
-
-
+ 
 
 
 ## create relationships
@@ -876,40 +884,47 @@ php artisan make:seeder PublishersTableSeeder
 
 - Books
 ```  
-public function run()
-{ 
-	//Get array of ids
-	$bookIds      = DB::table('books')->pluck('id')->toArray();
-	$authorIds      = DB::table('authors')->pluck('id')->toArray();
-	
-	//Seed user_role table with 20 entries
-	foreach ((range(1, 21)) as $index)
-	{
-		DB::table('author_book')->insert(
-			[
-				'book_id' => $bookIds[array_rand($bookIds)],
-				'author_id' => $authorIds[array_rand($authorIds)]
-			]
-		);
-	} 
-} 
+public function run() {
+    $authors = Author::all();
+
+    foreach ( Book::all() as $book ) {
+        $collectionAuthors = collect();
+        foreach ( ( range( 1, 3 ) ) as $i ) {
+
+            $currentAuthor = $authors->random();
+
+            if ( ! $collectionAuthors->contains( $currentAuthor->id ) ) {
+                DB::table( 'author_book' )->insert(
+                    [
+                        'book_id'   => $book->id,
+                        'author_id' => $currentAuthor->id
+                    ]
+                );
+                $collectionAuthors->push( $currentAuthor->id );
+            } else {
+                continue;
+            }
+        }
+    }
+
+}
 ```  
 
 - Publisher
 ```   	
 public function run() {
-	factory(App\Publisher::class, 50)->create()->each(function($p) {
-		for($i = 0; $i < rand(1,21); $i++) {
-			$p->books()->save(factory(App\Book::class)->make());
-		}
-	});
+    factory(App\Publisher::class, 5)->create()->each(function($p) {
+        for($i = 0; $i < rand(1,5); $i++) {
+            $p->books()->save(factory(App\Book::class)->make());
+        }
+    });
 }
 ```  
 
 - Authors 
 ```   	
 public function run() {
-	factory(App\Author::class, 50)->create();
+		factory(App\Author::class, 5)->create();
 }
 ```  
 
@@ -925,8 +940,6 @@ php artisan migrate:refresh --seed
 - adjust formfields, names & controller 
 - also set routes
 
-
- 
 
 
 ## TODO 
