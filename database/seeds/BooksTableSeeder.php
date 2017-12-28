@@ -10,16 +10,6 @@ class BooksTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run1()
-    {
-	    factory(App\Publisher::class, 50)->create()->each(function($p) {
-		    for($i = 0; $i < rand(1,21); $i++) {
-			    $p->books()->save(factory(App\Book::class)->make());
-		    }
-	    });
-	
-	
-    }
 	public function run()
 	{
 //		//Seed roles table with 20 entries

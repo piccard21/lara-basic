@@ -830,7 +830,16 @@ class Book extends Model {
 }
 ```  
  
-
+- publisher 
+```  
+class Publisher extends Model {
+	protected $fillable = ['name'];
+	
+	public function books() {
+		return $this->hasMany('App\Book');
+	}
+}
+```  
 
 
 ### factories
@@ -843,16 +852,24 @@ php artisan make:seeder PublishersTableSeeder
 $factory->define(App\Book::class, function (Faker $faker) {
     return [
 	    'title' => $faker->sentence,
-	    'published_at' =>  $faker->date('Y,m,d'),
-	    'publisher_id' => 1  // TODO: existing publisher
+	    'published_at' =>  $faker->date('Y,m,d'), 
     ];
 });
 ```   
 
+- Author
+```   
 
+$factory->define(App\Author::class, function (Faker $faker) {
+    return [
+	    'lastname' => $faker->lastName,
+	    'forename' => $faker->firstName,
+    ];
+});
+```   
 
 - Publisher
-```   
+```    
 $factory->define(App\Publisher::class, function (Faker $faker) {
     return [
 	    'name' => $faker->company
@@ -866,18 +883,46 @@ $factory->define(App\Publisher::class, function (Faker $faker) {
 php artisan make:seeder BooksTableSeeder 
 php artisan make:seeder PublishersTableSeeder 
 ```  
- 
+
+- Books
+```  
+public function run()
+{ 
+	//Get array of ids
+	$bookIds      = DB::table('books')->pluck('id')->toArray();
+	$authorIds      = DB::table('authors')->pluck('id')->toArray();
+	
+	//Seed user_role table with 20 entries
+	foreach ((range(1, 21)) as $index)
+	{
+		DB::table('author_book')->insert(
+			[
+				'book_id' => $bookIds[array_rand($bookIds)],
+				'author_id' => $authorIds[array_rand($authorIds)]
+			]
+		);
+	} 
+} 
+```  
 
 - Publisher
 ```   	
 public function run() {
-    factory(App\Publisher::class, 50)->create()->each(function($p) {
-        for($i = 0; $i < rand(1,21); $i++) {
-            $p->books()->save(factory(App\Book::class)->make());
-        }
-    });
+	factory(App\Publisher::class, 50)->create()->each(function($p) {
+		for($i = 0; $i < rand(1,21); $i++) {
+			$p->books()->save(factory(App\Book::class)->make());
+		}
+	});
 }
 ```  
+
+- Authors 
+```   	
+public function run() {
+	factory(App\Author::class, 50)->create();
+}
+```  
+
 
 - empty DB, migrate & seed 
 ```  
