@@ -97,6 +97,14 @@ class ExampleController extends Controller {
 	public function destroy(Request $request, Example $example) {
 		$example->delete();
 		
-		return redirect()->route('example.index')->with('message', 'Example deleted successfully');
+//		return redirect()->route('example.index')->with('message', 'Example deleted successfully');
+
+		$result = [
+			'success' => TRUE,
+			'message' => __('Example successfully deleted.')
+		];
+
+
+		return response()->json($result);
 	}
 }

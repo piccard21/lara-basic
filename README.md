@@ -992,8 +992,10 @@ public function store( Request $request ) {
     
 - Auth
     - migration alter  
+    
 - ServiceProvider
     - app/ app->extend
+    
 - Request Error Msgs + Forms
 
 - model - special pivot table?

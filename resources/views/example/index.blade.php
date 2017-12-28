@@ -24,9 +24,6 @@
                             {{ $example->text }}
                             </span>
 							<span>
-                                {{--<a class="btn btn-danger" href="{{ route("example.destroy", ["example" => $example->id]) }}">--}}
-								{{--<i class="fa fa-trash-o fa-1x"></i>--}}
-								{{--</a>--}}
 								<a class="btn btn-warning"
 								   href="{{ route("example.edit", ["example" => $example->id]) }}">
                                     <i class="fa fa-pencil fa-1x"></i>
@@ -34,15 +31,18 @@
                                 <a class="btn btn-info" href="{{ route("example.show", ["example" => $example->id]) }}">
                                     <i class="fa fa-eye fa-1x"></i>
                                 </a>
-                                <span class="d-inline-block">
-                                    <form action="{{ route('example.destroy',  ["example" => $example->id]) }}"
-                                          method="POST">
-                                        {{ method_field('DELETE') }}
-	                                    {{ csrf_field() }}
-	                                    <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i
-				                                    class="fa fa-trash-o fa-1x"></i></button>
-                                    </form>
-                                </span>
+                                {{--<span class="d-inline-block">--}}
+                                    {{--<form action="{{ route('example.destroy',  ["example" => $example->id]) }}"--}}
+                                          {{--method="POST">--}}
+                                        {{--{{ method_field('DELETE') }}--}}
+	                                    {{--{{ csrf_field() }}--}}
+	                                    {{--<button type="submit" class="btn btn-danger" style="cursor: pointer;"><i--}}
+				                                    {{--class="fa fa-trash-o fa-1x"></i></button>--}}
+                                    {{--</form>--}}
+                                {{--</span>--}}
+								<a class="btn btn-danger btn-destroy" data-href="{{ route("example.destroy", ["example" => $example->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+                                    <i class="fa fa-trash-o fa-1x"></i>
+                                </a>
                             </span>
 						</div>
 					</li>
@@ -52,5 +52,5 @@
 		<div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
 	</div>
 
-
+	@include('partials.confirm');
 @endsection
