@@ -770,6 +770,26 @@ public function up()
 } 
 ```    
 
+- author_book
+```    
+php artisan make:migration create_author_book --create=author_book
+```    
+
+```    
+	
+public $timestamps = false;
+	
+	
+public function up()
+{
+	$table->integer('author_id')->unsigned()->index();
+	$table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
+	
+	$table->integer('book_id')->unsigned()->index();
+	$table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+} 
+```    
+
 
 
 
