@@ -941,6 +941,36 @@ php artisan migrate:refresh --seed
 - also set routes
 
 
+## Add Transactions
+
+- add DB-Facade
+ 
+```   
+use Illuminate\Support\Facades\DB;
+```    
+- i.e. in **BookController**
+```   
+public function store( Request $request ) {
+    $this->validate( $request, [
+        'title'       => 'required|min:1|max:121',
+        'publisher'   => 'required|integer',
+        'publishedAt' => 'required|date_format:"Y,m,d"',
+        'authors.*'   => 'required|integer',
+    ] );
+
+    DB::transaction( function () use ($request) { 
+        $book = Book::create( [
+            'title'        => $request->input( 'title' ),
+            'publisher_id' => $request->input( 'publisher' ),
+            'published_at' => $request->input( 'publishedAt' )
+        ] );
+
+        $book->authors()->attach( $request->input( 'authors' ) );
+    });
+    
+    return redirect()->route( 'book.index' )->with( 'message', 'Book created successfully' );
+}
+```    
 
 ## TODO 
 ```   
