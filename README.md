@@ -926,9 +926,15 @@ php artisan migrate:refresh --seed
 - also set routes
 
 
+ 
 
 
-#### TODO
+## TODO 
+```   
+```   
+
+
+
 - exceptionHandling for DB-actions, i.e. AuthController->store()
 	- also alter in EXAMPLE
 ```  
@@ -937,13 +943,6 @@ php artisan migrate:refresh --seed
 		    ] );
 ```  
 
-
-
-
-
-## TODO 
-```   
-```   
 - model - special pivot table?
     
 
@@ -963,3 +962,4 @@ php artisan migrate:refresh --seed
 - Tests
 - Language
 - multiple DBs
+- PHPDoc
