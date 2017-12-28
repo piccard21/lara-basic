@@ -13,7 +13,7 @@
 			{{ csrf_field() }}
 			<div class="form-group">
 				<label for="publisherName">Name</label>
-				<input type="text" class="form-control" id="publisherName" placeholder="add name" name="name">
+				<input type="text" class="form-control" id="publisherName" placeholder="add name" name="name" value="{{ old('name') }}">
 				<small id="textHelp" class="form-text text-muted">Don't eat the yellow snow</small>
 			</div>
 			<button type="submit" class="btn btn-primary">Add</button>

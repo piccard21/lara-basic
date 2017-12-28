@@ -13,7 +13,7 @@
 			{{ csrf_field() }}
 			<div class="form-group">
 				<label for="bookTitle">Title</label>
-				<input type="text" class="form-control" id="bookTitle" placeholder="add title" name="title">
+				<input type="text" class="form-control" id="bookTitle" placeholder="add title" name="title" value="{{ old('title') }}">
 				<small id="textHelp" class="form-text text-muted">Don't eat the yellow snow</small>
 			</div>
 			<div class="form-group">
@@ -36,7 +36,7 @@
 			</div>
 			<div class="form-group">
 				<label for="bookPublishedAt">Published at</label>
-				<input type="text" class="form-control" id="bookPublishedAt" placeholder="add date" name="publishedAt">
+				<input type="text" class="form-control" id="bookPublishedAt" placeholder="add date" name="publishedAt" value="{{ old('publishedAt') }}">
 				<small id="textHelp" class="form-text text-muted">Y,m,d</small>
 			</div>
 			<button type="submit" class="btn btn-primary">Add</button>

@@ -943,13 +943,13 @@ php artisan migrate:refresh --seed
 
 ## Add Transactions
 
-- add DB-Facade
+- i.e. in **BookController** 
  
 ```   
 use Illuminate\Support\Facades\DB;
-```    
-- i.e. in **BookController**
-```   
+
+...
+
 public function store( Request $request ) {
     $this->validate( $request, [
         'title'       => 'required|min:1|max:121',
@@ -971,6 +971,18 @@ public function store( Request $request ) {
     return redirect()->route( 'book.index' )->with( 'message', 'Book created successfully' );
 }
 ```    
+
+
+
+## Sticky Forms
+
+
+- use helper **old()**
+```   
+<input type="text" class="form-control" id="bookTitle" placeholder="add title" name="title" value="{{ old('title') }}">
+```    
+
+
 
 ## TODO 
 ```   
