@@ -1,6 +1,10 @@
 # lara-basic
 
-[Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+## Links
+
+- [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+- [Laravel - Helpers](https://laravel.com/docs/5.5/helpers)
+- [faker](https://github.com/fzaninotto/Faker)
  
  
 ## Debug Bar
@@ -127,7 +131,7 @@ $font-size-base: 1rem;
     <div class="container">
         <div class="row">
             <div class="col">
-                <ul class="list-group">
+				<ul class="list-group mt-2 mb-2">
                     @foreach ($errors->all() as $error)
                         <li class="list-group-item list-group-item-danger">{{$error}}</li>
                     @endforeach
@@ -221,7 +225,7 @@ Route::get('/example', 'ExampleController@index')->name('example');
 -  open route  [http://127.0.0.1:8000/example/](http://127.0.0.1:8000/example/)
 
 
-## CRUD
+## CRUD with a single model
 
 ### Route
 
@@ -325,7 +329,7 @@ php artisan db:seed
 ```
 
 
-##### multiple seed using faker
+##### multiple seeds using faker
 
 - to add more than one row you can use a [faker](https://github.com/fzaninotto/Faker)
 - change seeder to:
@@ -363,27 +367,34 @@ php artisan db:seed
 @extends('layout.app')
 
 @section('content')
-    <div class="container">
-        <div class="mb-2">
-            <a class="btn btn-success" href="{{ route("example.create") }}">
-                <i class="fa fa-plus fa-lg"></i> Add
-            </a>
-        </div>
+	<div class="container">
 
-        <div>
-            <ul class="list-group">
-                @foreach($examples as $example)
-                    <li class="list-group-item">
-                        <div class="d-flex align-items-center">
+		<div class="jumbotron jumbo-custom">
+			<h3 class="display-4">Example</h3>
+			<hr>
+			<p class="lead">A very simple CRUD with only one model</p>
+		</div>
+
+		<div class="mb-2">
+			<a class="btn btn-success" href="{{ route("example.create") }}">
+				<i class="fa fa-plus fa-lg"></i> Add
+			</a>
+		</div>
+
+		<div>
+			<ul class="list-group">
+				@foreach($examples as $example)
+					<li class="list-group-item">
+						<div class="d-flex align-items-center">
                             <span class="mr-auto">
                             {{ $example->text }}
                             </span>
-                            <span>
+							<span>
                                 {{--<a class="btn btn-danger" href="{{ route("example.destroy", ["example" => $example->id]) }}">--}}
-                                {{--<i class="fa fa-trash-o fa-1x"></i>--}}
-                                {{--</a>--}}
-                                <a class="btn btn-warning"
-                                   href="{{ route("example.edit", ["example" => $example->id]) }}">
+								{{--<i class="fa fa-trash-o fa-1x"></i>--}}
+								{{--</a>--}}
+								<a class="btn btn-warning"
+								   href="{{ route("example.edit", ["example" => $example->id]) }}">
                                     <i class="fa fa-pencil fa-1x"></i>
                                 </a>
                                 <a class="btn btn-info" href="{{ route("example.show", ["example" => $example->id]) }}">
@@ -393,17 +404,21 @@ php artisan db:seed
                                     <form action="{{ route('example.destroy',  ["example" => $example->id]) }}"
                                           method="POST">
                                         {{ method_field('DELETE') }}
-                                        {{ csrf_field() }}
-                                        <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i class="fa fa-trash-o fa-1x"></i></button>
+	                                    {{ csrf_field() }}
+	                                    <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i
+				                                    class="fa fa-trash-o fa-1x"></i></button>
                                     </form>
                                 </span>
                             </span>
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
+						</div>
+					</li>
+				@endforeach
+			</ul>
+		</div>
+		<div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
+	</div>
+
+
 @endsection
 ``` 
 
@@ -416,6 +431,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">create</p>
+		</div>
+
 		<form method="POST" action="{{route('example.store')}}">
 			{{ csrf_field() }}
 			<div class="form-group">
@@ -439,6 +461,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">edit</p>
+		</div>
+
 		<form>
 			<div class="form-group">
 				<label for="exampleText">Text</label>
@@ -461,6 +490,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">show</p>
+		</div>
+		
 		<div class="card" style="width: 20rem;">
 			<div class="card-body">
 				<h4 class="card-title">Example: {{ $example->id }}</h4>
@@ -536,14 +572,9 @@ public function update(Request $request, Example $example) {
     ] );
     
     $example->text = $request->input( 'text' );
+	$example->save();
     
-    if ( $example->save() ) {
-        return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
-    } else {
-        return redirect()->back()->withErrors( [
-            "message" => "Board couldn't be updated"
-        ] );
-    }
+	return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
 }
 ```
 
@@ -551,30 +582,25 @@ public function update(Request $request, Example $example) {
 #### delete
 
 ``` 	
-public function destroy(Request $request, Example $example) {
-    if ( $example->delete() ) {
+public function destroy(Request $request, Example $example) { 
+		$example->delete();
         return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
-    } else {
-        return redirect()->back()->withErrors( [
-            "message" => "Example couldn't be deleted"
-        ] );
-    }
 }
 ```
 
 
 
-## Pagination
+## Pagination with BS4
 
 
 - **ExampleController**
 
 ``` 	
-//		$examples = Example::all();
-		$examples = Example::paginate(10);
+//		$examples = Example::all(); 
+	    $examples = Example::orderBy('text', 'asc')->paginate(10);
 ``` 
 	
-- **bootstrap.app.php**
+- **bootstrap/app.php**
 
 ```
 /* BS-4 pagination*/
@@ -590,22 +616,364 @@ Illuminate\Pagination\AbstractPaginator::defaultSimpleView("pagination::simple-b
 ``` 
    	
 
+## CRUD with multiple models
+
+- author ++  book +- publisher 
+
+### move models to app/Models
+
+- create **app/Models/**
+- **composer.json**
+
+```     
+"autoload": {
+    "classmap": [
+        ...
+        "app/Models"
+    ],
+``` 
+
+
+###  Controllers, Models & Migrations
+
+#### Long way
+```      
+php artisan make:controller AuthorController -r
+php artisan make:controller BookController -r
+php artisan make:controller PublisherController -r
+ 
+php artisan make:model Author -m
+php artisan make:model Book -m
+php artisan make:model Publisher -m
+
+php artisan make:factory -m Author AuthorFactory
+php artisan make:factory -m Book BookFactory
+php artisan make:factory -m Publisher PublisherFactory
+```      
+
+#### Short way
+- Generate a migration, factory, and resource controller for the model
+
+```      
+php artisan make:model Author -a
+php artisan make:model Book -a
+php artisan make:model Publisher -a
+```      
+
+- move the 3 models into **app/Models**
+
+### Prepare Models & Tables 
+
+- example: *Author*
+ 
+- **author-migration**
+```
+public function up()
+{
+    Schema::create('authors', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('lastname');
+        $table->string('forename');
+        $table->timestamps();
+    });
+}      
+```      
+- author-model
+```    
+class Author extends Model
+{
+	protected $fillable = ['lastname','forename'];
+}
+``` 
+- edit author-factory 
+```    
+$factory->define(App\Author::class, function (Faker $faker) {
+    return [
+	    'lastname' => $faker->lastName,
+	    'forename' => $faker->firstName,
+    ];
+});
+```    
+   
+- create seeder   
+```    
+php artisan make:seeder AuthorsTableSeeder 
+```    
+ 
+```    
+public function run()
+{ 
+	    factory(App\Author::class, 50)->create();
+}
+```    
+
+
+- add seeder to **seeds/DatabaseSeeder.php**
+
+```    
+$this->call(AuthorsTableSeeder::class);
+```    
+
+- seed
+```    
+composer dump-autoload
+php artisan db:seed
+```    
+
+
+### View & Controller 
+
+- copy **example/index.blade.php** to **author/index.blade.php** & replace example-variable
+- copy index() from example
+
+### set route
+
+```    
+Route::resource( '/author', 'AuthorController' ); 
+```    
+
+- [goto](http://127.0.0.1:8000/author) author.index to test if everything worked
+- ok ... so let's rollback
+
+```    
+php artisan migrate:rollback 
+```    
+
+#### other migration-files
+- repeat the same with the other models
+
+- book
+
+```
+public function up()
+{
+    Schema::create('books', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('title');
+        $table->date('published_at');
+        $table->integer('publisher_id')->unsigned();
+        $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');
+        $table->timestamps();
+    });
+}    
+```    
+
+- publisher
+```    
+public function up()
+{
+    Schema::create('publishers', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('name');
+        $table->timestamps();
+    });
+}
+```    
+
+- author_book
+```    
+php artisan make:migration create_author_book --create=author_book
+```    
+
+```    
+public $timestamps = false;
+		
+public function up() {
+    Schema::create('author_book', function(Blueprint $table) {
+        $table->integer('author_id')->unsigned()->index();
+        $table->integer('book_id')->unsigned()->index();
+
+        $table->primary(['author_id', 'book_id']);
+
+        $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
+        $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+    });
+}	
+```    
+ 
+
+
+## create relationships
+
+### models
+- author
+```  
+class Author extends Model
+ {
+    protected $fillable = ['lastname','forename'];
+    
+    public function books()
+    {
+        return $this->belongsToMany('App\Book');
+    }
+    
+ }
+
+```  
+
+
+- book
+```  
+class Book extends Model {
+	
+	protected $fillable = ['title', 'published_at', 'publisher_id'];
+	
+	public function publisher() {
+		return $this->belongsTo('App\Publisher');
+	}
+	
+	public function authors() {
+		return $this->belongsToMany('App\Author');
+	}
+}
+```  
+ 
+- publisher 
+```  
+class Publisher extends Model {
+	protected $fillable = ['name'];
+	
+	public function books() {
+		return $this->hasMany('App\Book');
+	}
+}
+```  
+
+
+### factories
+```  
+php artisan make:seeder BooksTableSeeder 
+php artisan make:seeder PublishersTableSeeder 
+```  
+- Book
+```   
+$factory->define(App\Book::class, function (Faker $faker) {
+    return [
+	    'title' => $faker->sentence,
+	    'published_at' =>  $faker->date('Y,m,d'), 
+    ];
+});
+```   
+
+- Author
+```   
+
+$factory->define(App\Author::class, function (Faker $faker) {
+    return [
+	    'lastname' => $faker->lastName,
+	    'forename' => $faker->firstName,
+    ];
+});
+```   
+
+- Publisher
+```    
+$factory->define(App\Publisher::class, function (Faker $faker) {
+    return [
+	    'name' => $faker->company
+    ];
+});
+```   
+
+
+### seeders
+```  
+php artisan make:seeder BooksTableSeeder 
+php artisan make:seeder PublishersTableSeeder 
+```  
+
+- Books
+```  
+public function run() {
+    $authors = Author::all();
+
+    foreach ( Book::all() as $book ) {
+        $collectionAuthors = collect();
+        foreach ( ( range( 1, 3 ) ) as $i ) {
+
+            $currentAuthor = $authors->random();
+
+            if ( ! $collectionAuthors->contains( $currentAuthor->id ) ) {
+                DB::table( 'author_book' )->insert(
+                    [
+                        'book_id'   => $book->id,
+                        'author_id' => $currentAuthor->id
+                    ]
+                );
+                $collectionAuthors->push( $currentAuthor->id );
+            } else {
+                continue;
+            }
+        }
+    }
+
+}
+```  
+
+- Publisher
+```   	
+public function run() {
+    factory(App\Publisher::class, 5)->create()->each(function($p) {
+        for($i = 0; $i < rand(1,5); $i++) {
+            $p->books()->save(factory(App\Book::class)->make());
+        }
+    });
+}
+```  
+
+- Authors 
+```   	
+public function run() {
+		factory(App\Author::class, 5)->create();
+}
+```  
+
+
+- empty DB, migrate & seed 
+```  
+php artisan migrate:refresh --seed
+```  
+
+### View & Controller 
+
+- copy & paste views & controller-methods from example 
+- adjust formfields, names & controller 
+- also set routes
+
+
 
 ## TODO 
-- move models to folder
+```   
+```    
+
+- exceptionHandling for DB-actions, i.e. AuthController->store()
+	- also alter in EXAMPLE
+```  
+		    return redirect()->back()->withErrors( [
+			    "message" => "Author couldn't be updated"
+		    ] );
+```  
+ 
+- sticky forms
+    
+- Exception-Handling
+- AJAX
 - Auth
+    - migration alter  
+- ServiceProvider
+    - app/ app->extend
+- model - special pivot table?
 - Request Error Msgs + Forms
+
 - Middle 
- 
+- Events
+- View::share
+- API
+- queryScopes
+- Tests
+- Language
+- multiple DBs
+- PHPDoc
 
 
-- factory for 1:n, n:m
-- to add more than one row you can use a [factory](https://laravel.com/docs/5.5/seeding#using-model-factories)
- 
-- migration simple
-- Controller
-- 1:n
-- n:m
-- alter
-- timestamps: false
-- fillable/???? 
+- Carbon

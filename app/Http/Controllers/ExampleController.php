@@ -13,7 +13,7 @@ class ExampleController extends Controller {
 	 */
 	public function index() {
 //		$examples = Example::all();
-		$examples = Example::paginate(10);
+		$examples = Example::orderBy('text', 'asc')->paginate(10);
 //	    return view( 'example.index', compact( 'examples' ) );
 		return view('example.index')->with('examples', $examples);
 	}
@@ -34,15 +34,15 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
-		$this->validate( $request, [
+		$this->validate($request, [
 			'text' => 'required|min:1|max:121'
-		] );
+		]);
 		
-		Example::create( [
-			'text'    => $request->input( 'text' )
-		] );
+		Example::create([
+			'text' => $request->input('text')
+		]);
 		
-		return redirect()->route( 'example.index' )->with( 'message', 'Text created successfully' );
+		return redirect()->route('example.index')->with('message', 'Text created successfully');
 	}
 	
 	/**
@@ -77,19 +77,15 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Example $example) {
-		$this->validate( $request, [
+		$this->validate($request, [
 			'text' => 'required|min:1|max:121'
-		] );
+		]);
 		
-		$example->text = $request->input( 'text' );
+		$example->text = $request->input('text');
+		$example->save();
 		
-		if ( $example->save() ) {
-			return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
-		} else {
-			return redirect()->back()->withErrors( [
-				"message" => "Board couldn't be updated"
-			] );
-		}
+		return redirect()->route('example.index')->with('message', 'Text updated successfully');
+		
 	}
 	
 	/**
@@ -99,12 +95,8 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Example $example) {
-		if ( $example->delete() ) {
-			return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
-		} else {
-			return redirect()->back()->withErrors( [
-				"message" => "Example couldn't be deleted"
-			] );
-		}
+		$example->delete();
+		
+		return redirect()->route('example.index')->with('message', 'Example deleted successfully');
 	}
 }
