@@ -944,6 +944,8 @@ php artisan migrate:refresh --seed
 ```  
 
 - model - special pivot table?
+- array validation
+- sticky forms
     
 
 - Auth

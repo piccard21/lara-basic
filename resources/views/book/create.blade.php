@@ -17,6 +17,14 @@
 				<small id="textHelp" class="form-text text-muted">Don't eat the yellow snow</small>
 			</div>
 			<div class="form-group">
+				<label for="bookAuthors">Author(s)</label>
+				<select multiple class="form-control" id="bookAuthors" name="authors[]">
+					@foreach($authors as $author)
+						<option value="{{ $author->id }}">{{ $author->lastname }}, {{ $author->forename }}</option>
+					@endforeach
+				</select>
+			</div>
+			<div class="form-group">
 				<label for="bookPublisher">Publisher select</label>
 				<select class="form-control" id="bookPublisher" name="publisher">
 					<option>--select--</option>

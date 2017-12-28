@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Book;
 use App\Publisher;
+use App\Author;
 use Illuminate\Http\Request;
 
 class BookController extends Controller {
@@ -23,8 +24,13 @@ class BookController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create() {
+		$authors = Author::orderBy('lastname', 'asc')->get();
 		$publishers = Publisher::orderBy('name', 'asc')->get();
-		return view('book.create')->with('publishers', $publishers);
+		
+		return view('book.create')->with([
+			'publishers' =>  $publishers,
+			'authors' =>  $authors
+		]);
 	}
 	
 	/**
@@ -37,21 +43,28 @@ class BookController extends Controller {
 		$this->validate($request, [
 			'title' => 'required|min:1|max:121',
 			'publisher' => 'required|integer',
-			'publishedAt' => 'required|date_format:"Y,m,d"'
+			'publishedAt' => 'required|date_format:"Y,m,d"',
+			'authors.*' => 'required|integer',
 		]);
 		
 		
-		$publisher = Publisher::find($request->input("publisher"));
+//		$publisher = Publisher::find($request->input("publisher"));
 		
 		// TODO
 		// if not found withErrors
-		// datefield
 		
-		Book::create([
+		$book = Book::create([
 			'title' => $request->input('title'),
 			'publisher_id' => $request->input('publisher'),
 			'published_at' => $request->input('publishedAt')
 		]);
+		
+		
+		$book->authors()->attach($request->input('authors'));
+		
+		// TODO
+		// if create????
+		// cascade oder detach
 		
 		return redirect()->route('book.index')->with('message', 'Book created successfully');
 	}
@@ -75,9 +88,13 @@ class BookController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit(Book $book) {
+		$authors = Author::orderBy('lastname', 'asc')->get();
+		$publishers = Publisher::orderBy('name', 'asc')->get();
+		
 		return view('book.edit')->with([
 			'book' => $book,
-			'publishers' => Publisher::orderBy('name', 'asc')->get()
+			'authors' => $authors,
+			'publishers' => $publishers
 		]);
 		
 	}
@@ -93,7 +110,8 @@ class BookController extends Controller {
 		$this->validate($request, [
 			'title' => 'required|min:1|max:121',
 			'publisher' => 'required|integer',
-			'publishedAt' => 'required|date_format:"Y,m,d"'
+			'publishedAt' => 'required|date_format:"Y,m,d"',
+			'authors.*' => 'required|integer',
 		]);
 		
 		$book->title = $request->input('title');
