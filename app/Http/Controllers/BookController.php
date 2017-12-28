@@ -114,6 +114,8 @@ class BookController extends Controller {
 			'authors.*' => 'required|integer',
 		]);
 		
+		$book->authors()->sync($request->input('authors'));
+		
 		$book->title = $request->input('title');
 		$book->publisher_id = $request->input('publisher');
 		$book->published_at = $request->input('publishedAt');
