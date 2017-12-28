@@ -23,3 +23,5 @@ Route::resource( '/example', 'ExampleController' );
 
 
 Route::resource( '/author', 'AuthorController' );
+Route::resource( '/book', 'BookController' );
+Route::resource( '/publisher', 'PublisherController' );

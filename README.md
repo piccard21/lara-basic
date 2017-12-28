@@ -923,6 +923,7 @@ php artisan migrate:refresh --seed
 
 - copy & paste views & controller-methods from example 
 - adjust formfields, names & controller 
+- also set routes
 
 
 

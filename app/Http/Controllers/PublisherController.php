@@ -14,7 +14,8 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        //
+	    $publishers = Publisher::orderBy('name', 'asc')->paginate(10);
+	    return view('publisher.index')->with('publishers', $publishers);
     }
 
     /**
@@ -24,7 +25,7 @@ class PublisherController extends Controller
      */
     public function create()
     {
-        //
+	    return view('publisher.create');
     }
 
     /**
@@ -35,7 +36,16 @@ class PublisherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+	    $this->validate( $request, [
+		    'name' => 'required|min:1|max:121'
+	    ] );
+	
+	    // TODO: ExceptionHandling
+	    Publisher::create( [
+		    'name'    => $request->input( 'name' )
+	    ] );
+	
+	    return redirect()->route( 'publisher.index' )->with( 'message', 'Publisher created successfully' );
     }
 
     /**
@@ -44,9 +54,11 @@ class PublisherController extends Controller
      * @param  \App\Publisher  $publisher
      * @return \Illuminate\Http\Response
      */
-    public function show(Publisher $publisher)
+    public function show(Request $request, Publisher $publisher)
     {
-        //
+	    return view('publisher.show')->with([
+		    'publisher' => $publisher
+	    ]);
     }
 
     /**
@@ -57,7 +69,9 @@ class PublisherController extends Controller
      */
     public function edit(Publisher $publisher)
     {
-        //
+	    return view('publisher.edit')->with([
+		    'publisher' => $publisher
+	    ]);
     }
 
     /**
@@ -69,7 +83,14 @@ class PublisherController extends Controller
      */
     public function update(Request $request, Publisher $publisher)
     {
-        //
+	    $this->validate( $request, [
+		    'name' => 'required|min:1|max:121'
+	    ] );
+	
+	    $publisher->name = $request->input( 'name' );
+	    $publisher->save();
+	
+	    return redirect()->route( 'publisher.index' )->with( 'message', 'Publisher updated successfully' );
     }
 
     /**
@@ -80,6 +101,7 @@ class PublisherController extends Controller
      */
     public function destroy(Publisher $publisher)
     {
-        //
+	    $publisher->delete();
+	    return redirect()->route( 'publisher.index' )->with( 'message', 'Publisher deleted successfully' );
     }
 }

@@ -7,10 +7,17 @@
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item active">
-				<a class="nav-link" href="{{ route("example.index") }}">Example</a>
+				<a class="nav-link" href="{{ route("example.index") }}">Crud - single model</a>
 			</li>
-			<li class="nav-item active">
-				<a class="nav-link" href="{{ route("author.index") }}">Author</a>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Crud - multiple models
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+					<a class="dropdown-item" href="{{ route("author.index") }}">Author</a>
+					<a class="dropdown-item" href="{{ route("book.index") }}">Book</a>
+					<a class="dropdown-item" href="{{ route("publisher.index") }}">Publisher</a>
+				</div>
 			</li>
 		</ul>
 	</div>
