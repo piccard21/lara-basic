@@ -4,6 +4,7 @@
 
 - [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 - [Laravel - Helpers](https://laravel.com/docs/5.5/helpers)
+- [faker](https://github.com/fzaninotto/Faker)
  
  
 ## Debug Bar
@@ -797,9 +798,29 @@ public function up()
 ## create relationships
 - setup other models
 
+### factories
+```  
+php artisan make:seeder BooksTableSeeder 
+php artisan make:seeder PublishersTableSeeder 
+```  
+
+
+### seeders
+```  
+php artisan make:seeder BooksTableSeeder 
+php artisan make:seeder PublishersTableSeeder 
+
+
+
+php artisan migrate:refresh --seed
+```  
+
+
 
 ## TODO 
 - author ++ book +- publisher
+
+- faker for date in book
 
  
 - model - special pivot table
