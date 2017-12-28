@@ -26,7 +26,7 @@
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="bookPublisher">Publisher select</label>
+				<label for="bookPublisher">Publisher</label>
 				<select class="form-control" id="bookPublisher" name="publisher">
 					<option>--select--</option>
 					@foreach($publishers as $publisher)

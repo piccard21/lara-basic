@@ -944,7 +944,6 @@ php artisan migrate:refresh --seed
 - sticky forms
     
 - Exception-Handling
-
 - AJAX
 - Auth
     - migration alter  
@@ -962,3 +961,6 @@ php artisan migrate:refresh --seed
 - Language
 - multiple DBs
 - PHPDoc
+
+
+- Carbon
