@@ -16,18 +16,18 @@ class BooksTableSeeder extends Seeder {
 
 		foreach ( Book::all() as $book ) {
 			$collectionAuthors = collect();
-
 			foreach ( ( range( 1, 3 ) ) as $i ) {
+
 				$currentAuthor = $authors->random();
 
-				if ( ! $collectionAuthors->contains( $currentAuthor ) ) {
+				if ( ! $collectionAuthors->contains( $currentAuthor->id ) ) {
 					DB::table( 'author_book' )->insert(
 						[
 							'book_id'   => $book->id,
-							'author_id' => $authors->random()->id
+							'author_id' => $currentAuthor->id
 						]
 					);
-					$collectionAuthors->push( $currentAuthor );
+					$collectionAuthors->push( $currentAuthor->id );
 				} else {
 					continue;
 				}

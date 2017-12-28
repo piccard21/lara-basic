@@ -933,7 +933,7 @@ php artisan migrate:refresh --seed
 ```   
 ```   
 
-
+primaray
 
 - exceptionHandling for DB-actions, i.e. AuthController->store()
 	- also alter in EXAMPLE
