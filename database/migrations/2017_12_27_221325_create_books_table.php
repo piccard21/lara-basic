@@ -18,7 +18,7 @@ class CreateBooksTable extends Migration
 	        $table->string('title');
 	        $table->date('published_at');
 	        $table->integer('publisher_id')->unsigned();
-	        $table->foreign('publisher_id')->references('id')->on('publishers');
+	        $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');
             $table->timestamps();
         });
     }
