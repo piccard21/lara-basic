@@ -943,13 +943,13 @@ php artisan migrate:refresh --seed
 
 ## Add Transactions
 
-- add DB-Facade
+- i.e. in **BookController** 
  
 ```   
 use Illuminate\Support\Facades\DB;
-```    
-- i.e. in **BookController**
-```   
+
+...
+
 public function store( Request $request ) {
     $this->validate( $request, [
         'title'       => 'required|min:1|max:121',
@@ -972,29 +972,31 @@ public function store( Request $request ) {
 }
 ```    
 
-## TODO 
+
+
+## Sticky Forms
+
+
+- use helper **old('input-field-name', 'default-value')**
 ```   
+<input type="text" class="form-control" id="bookTitle" placeholder="add title" name="title" value="{{ old('title') }}">
 ```    
 
-- exceptionHandling for DB-actions, i.e. AuthController->store()
-	- also alter in EXAMPLE
-```  
-		    return redirect()->back()->withErrors( [
-			    "message" => "Author couldn't be updated"
-		    ] );
-```  
- 
-- sticky forms
+
+## TODO 
+```   
+```     
     
-- Exception-Handling
 - AJAX
+    - Exception-Handling
+    
 - Auth
     - migration alter  
 - ServiceProvider
     - app/ app->extend
-- model - special pivot table?
 - Request Error Msgs + Forms
 
+- model - special pivot table?
 - Middle 
 - Events
 - View::share
@@ -1007,3 +1009,9 @@ public function store( Request $request ) {
 
 
 - Carbon
+
+```  
+		    return redirect()->back()->withErrors( [
+			    "message" => "Author couldn't be updated"
+		    ] );
+```  
