@@ -8,6 +8,7 @@
 			<hr>
 			<p class="lead">show</p>
 		</div>
+
 		<div class="card" style="width: 20rem;">
 			<div class="card-body">
 				<h4 class="card-title">Example: {{ $example->id }}</h4>

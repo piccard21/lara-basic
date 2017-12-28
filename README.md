@@ -127,7 +127,7 @@ $font-size-base: 1rem;
     <div class="container">
         <div class="row">
             <div class="col">
-                <ul class="list-group">
+				<ul class="list-group mt-2 mb-2">
                     @foreach ($errors->all() as $error)
                         <li class="list-group-item list-group-item-danger">{{$error}}</li>
                     @endforeach
@@ -426,6 +426,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">create</p>
+		</div>
+
 		<form method="POST" action="{{route('example.store')}}">
 			{{ csrf_field() }}
 			<div class="form-group">
@@ -449,6 +456,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">edit</p>
+		</div>
+
 		<form>
 			<div class="form-group">
 				<label for="exampleText">Text</label>
@@ -471,6 +485,13 @@ php artisan db:seed
 
 @section('content')
 	<div class="container">
+
+		<div class="jumbotron jumbo-custom">
+			<h1 class="display-4">Example </h1>
+			<hr>
+			<p class="lead">show</p>
+		</div>
+		
 		<div class="card" style="width: 20rem;">
 			<div class="card-body">
 				<h4 class="card-title">Example: {{ $example->id }}</h4>
