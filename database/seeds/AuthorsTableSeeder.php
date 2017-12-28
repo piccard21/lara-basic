@@ -9,6 +9,6 @@ class AuthorsTableSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		factory(App\Author::class, 50)->create();
+		factory(App\Author::class, 5)->create();
 	}
 }
