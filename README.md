@@ -367,6 +367,7 @@ php artisan db:seed
 
 		<div class="jumbotron jumbo-custom">
 			<h3 class="display-4">Example</h3>
+			<hr>
 			<p class="lead">A very simple CRUD with only one model</p>
 		</div>
 

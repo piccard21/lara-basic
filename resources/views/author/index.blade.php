@@ -2,6 +2,13 @@
 
 @section('content')
     <div class="container">
+
+        <div class="jumbotron jumbo-custom">
+            <h3 class="display-4">Author</h3>
+	        <hr>
+            <p class="lead">CRUD with multiple models</p>
+        </div>
+
         <div class="mb-2">
             <a class="btn btn-success" href="{{ route("author.create") }}">
                 <i class="fa fa-plus fa-lg"></i> Add
