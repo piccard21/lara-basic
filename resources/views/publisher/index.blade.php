@@ -6,7 +6,8 @@
 		<div class="jumbotron jumbo-custom">
 			<h1 class="display-4">Publisher</h1>
 			<hr>
-			<p class="lead">A very simple CRUD with only one model</p>
+			<p class="lead">CRUD with multiple models</p>
+			author ++  book +- publisher
 		</div>
 
 		<div class="mb-2">
