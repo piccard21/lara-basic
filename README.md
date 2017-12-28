@@ -744,6 +744,33 @@ Route::resource( '/author', 'AuthorController' );
 php artisan migrate:rollback 
 ```    
 
+#### other migration-files
+- repeat the same with the other models
+
+- book
+
+```
+$table->increments('id');
+$table->string('title');
+$table->date('published_at');
+$table->integer('publisher_id')->unsigned();
+$table->foreign('publisher_id')->references('id')->on('publishers');
+$table->timestamps();     
+```    
+
+- publisher
+```    
+public function up()
+{
+    Schema::create('publishers', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('name');
+        $table->timestamps();
+    });
+} 
+```    
+
+
 
 
 
