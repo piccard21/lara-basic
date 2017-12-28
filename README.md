@@ -977,36 +977,26 @@ public function store( Request $request ) {
 ## Sticky Forms
 
 
-- use helper **old()**
+- use helper **old('input-field-name', 'default-value')**
 ```   
 <input type="text" class="form-control" id="bookTitle" placeholder="add title" name="title" value="{{ old('title') }}">
 ```    
 
 
-
 ## TODO 
 ```   
-```    
-
-- exceptionHandling for DB-actions, i.e. AuthController->store()
-	- also alter in EXAMPLE
-```  
-		    return redirect()->back()->withErrors( [
-			    "message" => "Author couldn't be updated"
-		    ] );
-```  
- 
-- sticky forms
+```     
     
-- Exception-Handling
 - AJAX
+    - Exception-Handling
+    
 - Auth
     - migration alter  
 - ServiceProvider
     - app/ app->extend
-- model - special pivot table?
 - Request Error Msgs + Forms
 
+- model - special pivot table?
 - Middle 
 - Events
 - View::share
@@ -1019,3 +1009,9 @@ public function store( Request $request ) {
 
 
 - Carbon
+
+```  
+		    return redirect()->back()->withErrors( [
+			    "message" => "Author couldn't be updated"
+		    ] );
+```  
