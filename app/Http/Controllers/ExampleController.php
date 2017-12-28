@@ -13,7 +13,7 @@ class ExampleController extends Controller {
 	 */
 	public function index() {
 //		$examples = Example::all();
-		$examples = Example::paginate(10);
+		$examples = Example::orderBy('text', 'asc')->paginate(10);
 //	    return view( 'example.index', compact( 'examples' ) );
 		return view('example.index')->with('examples', $examples);
 	}

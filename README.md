@@ -606,8 +606,8 @@ public function destroy(Request $request, Example $example) {
 - **ExampleController**
 
 ``` 	
-//		$examples = Example::all();
-		$examples = Example::paginate(10);
+//		$examples = Example::all(); 
+	    $examples = Example::orderBy('text', 'asc')->paginate(10);
 ``` 
 	
 - **bootstrap/app.php**
@@ -803,21 +803,57 @@ public function up()
 php artisan make:seeder BooksTableSeeder 
 php artisan make:seeder PublishersTableSeeder 
 ```  
+- Book
+```   
+$factory->define(App\Book::class, function (Faker $faker) {
+    return [
+	    'title' => $faker->sentence,
+	    'published_at' =>  $faker->date('Y,m,d'),
+	    'publisher_id' => 1  // TODO: existing publisher
+    ];
+});
+```   
+
+
+
+- Publisher
+```   
+$factory->define(App\Publisher::class, function (Faker $faker) {
+    return [
+	    'name' => $faker->company
+    ];
+});
+```   
 
 
 ### seeders
 ```  
 php artisan make:seeder BooksTableSeeder 
 php artisan make:seeder PublishersTableSeeder 
+```  
+ 
 
+- Publisher
+```   	
+public function run() {
+    factory(App\Publisher::class, 50)->create()->each(function($p) {
+        for($i = 0; $i < rand(1,21); $i++) {
+            $p->books()->save(factory(App\Book::class)->make());
+        }
+    });
+}
+```  
 
-
+- empty DB, migrate & seed 
+```  
 php artisan migrate:refresh --seed
 ```  
 
 
 
 ## TODO 
+```   
+```  
 - author ++ book +- publisher
 
 - faker for date in book
