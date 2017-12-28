@@ -929,6 +929,25 @@ public function run() {
 php artisan migrate:refresh --seed
 ```  
 
+### View & Controller 
+
+- copy & paste views & controller-methods from example 
+- adjust formfields, names & controller 
+
+
+
+
+#### TODO
+- exceptionHandling for DB-actions, i.e. AuthController->store()
+	- also alter in EXAMPLE
+```  
+		    return redirect()->back()->withErrors( [
+			    "message" => "Author couldn't be updated"
+		    ] );
+```  
+
+
+
 
 
 ## TODO 

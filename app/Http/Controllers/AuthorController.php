@@ -25,7 +25,7 @@ class AuthorController extends Controller
      */
     public function create()
     {
-        //
+	    return view('author.create');
     }
 
     /**
@@ -36,7 +36,18 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+	    $this->validate( $request, [
+		    'lastname' => 'required|min:1|max:121',
+		    'forename' => 'required|min:1|max:121',
+	    ] );
+	
+	    // TODO: ExceptionHandling
+	    Author::create( [
+		    'lastname'    => $request->input( 'lastname' ),
+		    'forename'    => $request->input( 'forename' )
+	    ] );
+	
+	    return redirect()->route( 'author.index' )->with( 'message', 'Author created successfully' );
     }
 
     /**
@@ -45,9 +56,11 @@ class AuthorController extends Controller
      * @param  \App\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function show(Author $author)
+    public function show(Request $request, Author $author)
     {
-        //
+	    return view('author.show')->with([
+		    'author' => $author
+	    ]);
     }
 
     /**
@@ -56,9 +69,11 @@ class AuthorController extends Controller
      * @param  \App\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function edit(Author $author)
+    public function edit(Request $request, Author $author)
     {
-        //
+	    return view('author.edit')->with([
+		    'author' => $author
+	    ]);
     }
 
     /**
@@ -70,7 +85,15 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        //
+	    $this->validate( $request, [
+		    'lastname' => 'required|min:1|max:121',
+		    'forename' => 'required|min:1|max:121'
+	    ] );
+	
+	    $author->lastname = $request->input( 'lastname' );
+	    $author->forename = $request->input( 'forename' );
+	 
+	    return redirect()->route( 'author.index' )->with( 'message', 'Author updated successfully' );
     }
 
     /**
@@ -79,8 +102,8 @@ class AuthorController extends Controller
      * @param  \App\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Author $author)
+    public function destroy(Request $request, Author $author)
     {
-        //
+	    return redirect()->route( 'author.index' )->with( 'message', 'Author deleted successfully' );
     }
 }

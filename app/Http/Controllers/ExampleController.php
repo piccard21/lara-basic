@@ -82,14 +82,7 @@ class ExampleController extends Controller {
 		] );
 		
 		$example->text = $request->input( 'text' );
-		
-		if ( $example->save() ) {
-			return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
-		} else {
-			return redirect()->back()->withErrors( [
-				"message" => "Board couldn't be updated"
-			] );
-		}
+		return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
 	}
 	
 	/**
@@ -99,12 +92,6 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Example $example) {
-		if ( $example->delete() ) {
-			return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
-		} else {
-			return redirect()->back()->withErrors( [
-				"message" => "Example couldn't be deleted"
-			] );
-		}
+		return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
 	}
 }
