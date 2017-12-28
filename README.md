@@ -931,9 +931,7 @@ php artisan migrate:refresh --seed
 
 ## TODO 
 ```   
-```   
-
-primaray
+```    
 
 - exceptionHandling for DB-actions, i.e. AuthController->store()
 	- also alter in EXAMPLE
@@ -942,24 +940,23 @@ primaray
 			    "message" => "Author couldn't be updated"
 		    ] );
 ```  
-
-- model - special pivot table?
-- array validation
+ 
 - sticky forms
     
+- Exception-Handling
 
+- AJAX
 - Auth
     - migration alter  
+- ServiceProvider
+    - app/ app->extend
+- model - special pivot table?
 - Request Error Msgs + Forms
 
 - Middle 
 - Events
 - View::share
 - API
-- AJax
-- Exception-Handling
-- ServiceProvider
-- app-> extend
 - queryScopes
 - Tests
 - Language
