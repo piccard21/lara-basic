@@ -933,19 +933,9 @@ php artisan migrate:refresh --seed
 
 ## TODO 
 ```   
-```  
-- author ++ book +- publisher
-
-- faker for date in book
-
- 
-- model - special pivot table
-- fk
-    - https://laravel.com/docs/5.5/migrations#foreign-key-constraints
-- factory for 1:n, n:m  
-- timestamps: false
-- fillable/protected  
-- sortieren
+```   
+- model - special pivot table?
+    
 
 - Auth
     - migration alter  
