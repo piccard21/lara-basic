@@ -7,6 +7,7 @@
             <h3 class="display-4">Author</h3>
 	        <hr>
             <p class="lead">CRUD with multiple models</p>
+	        author ++  book +- publisher
         </div>
 
         <div class="mb-2">
