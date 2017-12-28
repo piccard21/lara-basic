@@ -92,6 +92,7 @@ class AuthorController extends Controller
 	
 	    $author->lastname = $request->input( 'lastname' );
 	    $author->forename = $request->input( 'forename' );
+	    $author->save();
 	 
 	    return redirect()->route( 'author.index' )->with( 'message', 'Author updated successfully' );
     }
@@ -104,6 +105,7 @@ class AuthorController extends Controller
      */
     public function destroy(Request $request, Author $author)
     {
+	    $author->delete();
 	    return redirect()->route( 'author.index' )->with( 'message', 'Author deleted successfully' );
     }
 }

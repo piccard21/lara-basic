@@ -34,15 +34,15 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
-		$this->validate( $request, [
+		$this->validate($request, [
 			'text' => 'required|min:1|max:121'
-		] );
+		]);
 		
-		Example::create( [
-			'text'    => $request->input( 'text' )
-		] );
+		Example::create([
+			'text' => $request->input('text')
+		]);
 		
-		return redirect()->route( 'example.index' )->with( 'message', 'Text created successfully' );
+		return redirect()->route('example.index')->with('message', 'Text created successfully');
 	}
 	
 	/**
@@ -77,12 +77,15 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Example $example) {
-		$this->validate( $request, [
+		$this->validate($request, [
 			'text' => 'required|min:1|max:121'
-		] );
+		]);
 		
-		$example->text = $request->input( 'text' );
-		return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
+		$example->text = $request->input('text');
+		$example->save();
+		
+		return redirect()->route('example.index')->with('message', 'Text updated successfully');
+		
 	}
 	
 	/**
@@ -92,6 +95,8 @@ class ExampleController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy(Request $request, Example $example) {
-		return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
+		$example->delete();
+		
+		return redirect()->route('example.index')->with('message', 'Example deleted successfully');
 	}
 }

@@ -572,6 +572,7 @@ public function update(Request $request, Example $example) {
     ] );
     
     $example->text = $request->input( 'text' );
+	$example->save();
     
 	return redirect()->route( 'example.index' )->with( 'message', 'Text updated successfully' );
 }
@@ -582,6 +583,7 @@ public function update(Request $request, Example $example) {
 
 ``` 	
 public function destroy(Request $request, Example $example) { 
+		$example->delete();
         return redirect()->route( 'example.index' )->with( 'message', 'Example deleted successfully' );
 }
 ```
