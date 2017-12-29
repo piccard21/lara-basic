@@ -13576,7 +13576,6 @@ var tools_utils = {
     reload: function reload() {
         location.reload(true);
     }
-
 };
 
 /***/ }),

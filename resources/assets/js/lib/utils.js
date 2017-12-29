@@ -98,5 +98,4 @@ export const tools_utils = {
     reload: function () {
         location.reload(true);
     }
-
 }

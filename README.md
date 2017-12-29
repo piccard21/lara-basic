@@ -1130,34 +1130,13 @@ export const tools_utils = {
         }
         return cb;
     },
-    notifyConfirm: function (cb) {
-        iziToast.question({
-            timeout: 10000,
-            close: false,
-            overlay: true,
-            toastOnce: true,
-            id: 'question',
-            zindex: 999,
-            message: 'Are you sure about that?',
-            position: 'center',
-            buttons: [
-                ['<button><b>YES</b></button>', function (instance, toast) {
-                    instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
-                    this.callback(cb);
-                }, true],
-                ['<button>NO</button>', function (instance, toast) {
-                    instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
-                }]
-            ]
-        });
-    },
     handleResult: function (result, cb) {
         if (result.success) {
             if (result && result.message) {
-                tools_utils.notfiySuccess(result.message, this.getCallback(cb));
+                this.notfiySuccess(result.message, this.getCallback(cb));
             }
         } else {
-            tools_utils.notfiyError(result.message, this.emptyFn());
+            this.notfiyError(result.message, this.emptyFn());
         }
     },
     isUndefined: function (val) {
@@ -1168,7 +1147,6 @@ export const tools_utils = {
     reload: function () {
         location.reload(true);
     }
-
 }
 ```    
 
@@ -1185,32 +1163,34 @@ export const tools_modal = {
 	init: function () {
 		this.confirmDelete($('#modal-confirm-delete'));
 	},
-     confirmDeleteBS: function ($tag) {
-         $tag.on('shown.bs.modal', function (e) {
-             $(this).find('#btn-confirm-delete-ok').one('click', function () {
-                 $tag.modal('hide');
-                 $.busyLoadFull("show");
- 
-                 $.ajax({
-                     url: $(e.relatedTarget).data('href'),
-                     data: {_method: "DELETE"},
-                     type: "DELETE",
-                     dataType: "json",
-                     success: function (result) {
-                         tools_utils.handleResult(result);
-                         $(e.relatedTarget).parents('.list-group-item').remove()
-                     },
-                     error: function (xhr, textStatus, thrownError) {
-                         tools_utils.notfiyError(textStatus + '<br>' + thrownError);
-                     }
-                 })
-                     .always(function () {
-                         $.busyLoadFull("hide");
-                     });
- 
-             });
-         });
-     },
+    confirmDeleteBS: function ($tag) {
+        $tag.on('shown.bs.modal', function (e) {
+            $(this).find('#btn-confirm-delete-ok').one('click', function () {
+                $tag.modal('hide');
+                $.busyLoadFull("show");
+                $.ajax({
+                    url: $(e.relatedTarget).data('href'),
+                    data: {_method: "DELETE"},
+                    type: "DELETE",
+                    dataType: "json",
+                    success: function (result) {
+                        tools_utils.handleResult(result);
+                        $(e.relatedTarget).parents('.list-group-item').remove()
+                    },
+                    error: function (xhr, textStatus, thrownError) {
+                        tools_utils.notfiyError(textStatus + '<br>' + thrownError);
+                    }
+                })
+                    .always(function () {
+                        $.busyLoadFull("hide");
+                    });
+
+            });
+        });
+        $tag.on('hide.bs.modal', function (e) {
+            $(this).find('#btn-confirm-delete-ok').off('click');
+        });
+    }
 }
 ```     
 
@@ -1360,7 +1340,7 @@ notifyConfirm: function (cb) {
         buttons: [
             ['<button><b>YES</b></button>', function (instance, toast) {
                 instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
-                this.callback(cb);
+                tools_utils.callback(cb);
             }, true],
             ['<button>NO</button>', function (instance, toast) {
                 instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
