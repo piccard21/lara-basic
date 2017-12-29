@@ -989,7 +989,7 @@ public function store( Request $request ) {
 - Laravel likes ES6, so we use it
 - Loading-mask, i.e. [busy-load](https://www.npmjs.com/package/busy-load) 
 - Notifier-library, i.e. [iziToast](http://izitoast.marcelodolce.com/)
-- create ES6-utils-module
+- create ES6-helper-modules
 
 - **layout/app.blade.php**
 	- for sake of simplicity, the loading-mask will be added via cdn
@@ -1143,6 +1143,9 @@ export const tools_utils = {
 }
 ```    
 
+### BS-confirm-modal
+
+- create a BS-confirm-modal in **Example**-project
 
 - **lib/modal.js**
 
@@ -1185,7 +1188,7 @@ export const tools_modal = {
 ```     
 
 
-### exchange delete-form in Example 
+#### exchange delete-form in Example 
 
 - uncomment *form* in **example/index.blade.php**
 - add
@@ -1236,24 +1239,16 @@ export const tools_modal = {
 .btn-danger, .btn-warning, .btn-warning {
   color: #fff !important;
 }
-```
- 
-    
- 
- 
+``` 
 
 - **ExampleController**
 
-	- for testing-purposes throw an exception ... a red notofer should appear
+	- for testing-purposes throw an exception ... a red notifier should appear
 
 ```
 public function destroy(Request $request, Example $example) {
-
-
 //		throw new Exception("Somethnig went terrible wrong");
-
 	$example->delete();
-
 // return redirect()->route('example.index')->with('message', 'Example deleted successfully');
 	
 	$result = [
@@ -1265,6 +1260,87 @@ public function destroy(Request $request, Example $example) {
 }
 ``` 
 
+### Notifier-confirm
+
+- create a notifier-confirm-modal in **Books**-project
+ 
+- **index.blade.php** 
+
+```     
+{{--<a class="btn btn-danger" data-href="{{ route("publisher.destroy", ["publisher" => $publisher->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">--}}
+    {{--<i class="fa fa-trash-o fa-1x"></i>--}}
+{{--</a>--}}
+<a class="btn btn-danger btn-confirm-delete"
+   data-href="{{ route("publisher.destroy", ["publisher" => $publisher->id]) }}">
+    <i class="fa fa-trash-o fa-1x"></i>
+</a>
+```     
+
+- **lib/modal.js** 
+
+```   
+init: function () {
+    ...
+    this.confirmDeleteNotify($('.btn-confirm-delete'));
+}, 
+...
+confirmDeleteNotify: function ($tag) {
+    $tag.on('click', function (e) {
+
+        let deleteCallback = function() {
+            $.busyLoadFull("show");
+
+            $.ajax({
+                url: $(e.currentTarget).data('href'),
+                data: {_method: "DELETE"},
+                type: "DELETE",
+                dataType: "json",
+                success: function (result) {
+                    $.busyLoadFull("hide");
+                    tools_utils.handleResult(result, tools_utils.reload);
+                },
+                error: function (xhr, textStatus, thrownError) {
+                    tools_utils.notfiyError(textStatus + '<br>' + thrownError);
+                }
+            });
+        };
+
+        tools_utils.notifyConfirm(deleteCallback);
+
+    });
+}
+```     
+
+
+- **lib/utils.js** 
+
+```   
+notifyConfirm: function (callback) {
+    iziToast.question({
+        timeout: 10000,
+        close: false,
+        overlay: true,
+        toastOnce: true,
+        id: 'question',
+        zindex: 999,
+        message: 'Are you sure about that?',
+        position: 'center',
+        buttons: [
+            ['<button><b>YES</b></button>', function (instance, toast) {
+                instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
+                callback();
+            }, true],
+            ['<button>NO</button>', function (instance, toast) {
+                instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
+            }]
+        ]
+    });
+},
+```     
+
+
+ 
+ 
  
 
 ## TODO 
@@ -1282,7 +1358,8 @@ public function destroy(Request $request, Example $example) {
 - ServiceProvider
     - app/ app->extend
     
-- Request Error Msgs + Forms
+- Request-Class-Form
+- Error Msgs 
 
 - model - special pivot table?
 - View::share
