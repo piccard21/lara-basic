@@ -1293,9 +1293,7 @@ init: function () {
 ...
 confirmDeleteNotify: function ($tag) {
     $tag.on('click', function (e) {
-
         let $currentTag = $(this);
-
         let deleteCallback = function () {
             $.busyLoadFull("show");
 
@@ -1306,7 +1304,10 @@ confirmDeleteNotify: function ($tag) {
                 dataType: "json",
                 success: function (result) {
                     tools_utils.handleResult(result);
-                    $currentTag.parents('.list-group-item').remove()
+                    let lgi = $currentTag.parents('.list-group-item');
+                    lgi.slideUp(1000, function () {
+                        lgi.remove();
+                    });
                 },
                 error: function (xhr, textStatus, thrownError) {
                     tools_utils.notfiyError(textStatus + '<br>' + thrownError);

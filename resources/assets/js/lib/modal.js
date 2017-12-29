@@ -10,6 +10,7 @@ export const tools_modal = {
             $(this).find('#btn-confirm-delete-ok').one('click', function () {
                 $tag.modal('hide');
                 $.busyLoadFull("show");
+
                 $.ajax({
                     url: $(e.relatedTarget).data('href'),
                     data: {_method: "DELETE"},
@@ -35,9 +36,7 @@ export const tools_modal = {
     },
     confirmDeleteNotify: function ($tag) {
         $tag.on('click', function (e) {
-
             let $currentTag = $(this);
-
             let deleteCallback = function () {
                 $.busyLoadFull("show");
 
@@ -48,7 +47,10 @@ export const tools_modal = {
                     dataType: "json",
                     success: function (result) {
                         tools_utils.handleResult(result);
-                        $currentTag.parents('.list-group-item').remove()
+                        let lgi = $currentTag.parents('.list-group-item');
+                        lgi.slideUp(1000, function () {
+                            lgi.remove();
+                        });
                     },
                     error: function (xhr, textStatus, thrownError) {
                         tools_utils.notfiyError(textStatus + '<br>' + thrownError);
