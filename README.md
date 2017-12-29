@@ -1272,10 +1272,12 @@ public function destroy(Request $request, Example $example) {
 ```     
 
 - busy-load import
-	- extract?!?! 
-    
+	- extract?!?!  
+	
 - Auth
     - migration alter  
+- Middle 
+- Events
     
 - ServiceProvider
     - app/ app->extend
@@ -1283,15 +1285,13 @@ public function destroy(Request $request, Example $example) {
 - Request Error Msgs + Forms
 
 - model - special pivot table?
-- Middle 
-- Events
 - View::share
 - API
 - queryScopes
-- Tests
 - Language
 - multiple DBs
 - PHPDoc
+- Tests
 
 
 - Carbon
