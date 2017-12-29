@@ -41,7 +41,11 @@
 				                                    {{--class="fa fa-trash-o fa-1x"></i></button>--}}
                                     {{--</form>--}}
                                 {{--</span>--}}
-	                            <a class="btn btn-danger" data-href="{{ route("book.destroy", ["book" => $book->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+	                            {{--<a class="btn btn-danger" data-href="{{ route("book.destroy", ["book" => $book->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">--}}
+                                    {{--<i class="fa fa-trash-o fa-1x"></i>--}}
+                                {{--</a>--}}
+								<a class="btn btn-danger btn-confirm-delete"
+								   data-href="{{ route("book.destroy", ["book" => $book->id]) }}">
                                     <i class="fa fa-trash-o fa-1x"></i>
                                 </a>
                             </span>
@@ -53,6 +57,6 @@
 		<div class="d-flex justify-content-center mt-2">{{ $books->links() }}</div>
 	</div>
 
-	@include('partials.confirm-delete')
+	{{--@include('partials.confirm-delete')--}}
 
 @endsection
