@@ -983,6 +983,130 @@ public function store( Request $request ) {
 ```    
 
 
+## AJAX
+
+### exchange delete-form in Example 
+
+- uncomment *form* in **example/index.blade.php**
+- add
+
+```   
+<a class="btn btn-danger" data-href="{{ route("example.destroy", ["example" => $example->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+    <i class="fa fa-trash-o fa-1x"></i>
+</a>
+```     
+
+- add modal 
+
+```    
+...
+	@include('partials.confirm-delete');
+@endsection
+```     
+
+- the modal is outsourced inside a *partial*
+	- create folder **partials** below **views**
+	- create **confirm-delete.blade.php**
+
+``` 
+<!-- Modal -->
+<div class="modal fade" id="modal-confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete example</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-secondary" data-dismiss="modal">Close</a>
+                <a id="btn-confirm-delete-ok" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+```     
+- add css-rules for cursor inside **sass/_utils.scss**
+
+```
+.btn {
+  cursor: pointer;
+}
+
+.btn-danger, .btn-warning, .btn-warning {
+  color: #fff !important;
+}
+```
+
+- add a loading-mask insde **layout/app.blade.php**
+```   
+<link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
+```     
+    
+
+
+- addjs inside **js/app.js**
+
+```
+$.ajaxSetup({
+	headers: {
+		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}
+});
+
+$(document).ready(function () {
+	$('#modal-confirm-delete').on('shown.bs.modal', function (e) {
+
+		$(this).find('#btn-confirm-delete-ok').on('click', function () {
+
+			$(".modal-content").busyLoad("show");
+			$.ajax({
+				url: $(e.relatedTarget).data('href'),
+				data: {_method: "DELETE"},
+				type: "DELETE",
+				dataType: "json",
+			})
+				.done(function (json) {
+					$('#modal-confirm-delete').modal('hide');
+					location.reload(true);
+				})
+				.fail(function (xhr, status, errorThrown) {
+					alert("Sorry, there was a problem!");
+					console.log("Error: " + errorThrown);
+					console.log("Status: " + status);
+					console.dir(xhr);
+				})
+				.always(function (xhr, status) {
+					// alert( "The request is complete!" );
+					$(".modal-content").busyLoad("hide");
+				});
+		});
+	});
+});
+```
+
+ 
+
+- **ExampleController**
+```
+public function destroy(Request $request, Example $example) {
+	$example->delete();
+
+// return redirect()->route('example.index')->with('message', 'Example deleted successfully');
+	
+	$result = [
+		'success' => TRUE,
+		'message' => __('Example successfully deleted.')
+	];
+	
+	return response()->json($result);
+}
+``` 
+
+ 
+
 ## TODO 
 ```   
 ```     
