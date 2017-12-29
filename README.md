@@ -1203,10 +1203,9 @@ export const tools_modal = {
 	@include('partials.confirm-delete');
 @endsection
 ```     
-
-- the modal is outsourced inside a *partial*
-	- create folder **partials** below **views**
-	- create **confirm-delete.blade.php**
+ 
+- create folder **partials** below **views**
+- create **confirm-delete.blade.php**
 
 ``` 
 <!-- Modal -->
@@ -1273,13 +1272,7 @@ public function destroy(Request $request, Example $example) {
 ```     
 
 - busy-load import
-	- extract?!?!
-    
-- AJAX
-    - notfier
-        - https://ned.im/noty/
-            - npm install noty --save-dev
-    - mod -> handleResult
+	- extract?!?! 
     
 - Auth
     - migration alter  
