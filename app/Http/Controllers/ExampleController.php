@@ -108,7 +108,6 @@ class ExampleController extends Controller {
 			'message' => __('Example successfully deleted.')
 		];
 		
-		
 		return response()->json($result);
 	}
 }

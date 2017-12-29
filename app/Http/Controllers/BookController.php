@@ -135,6 +135,12 @@ class BookController extends Controller {
 	public function destroy( Book $book ) {
 		$book->delete();
 
-		return redirect()->route( 'book.index' )->with( 'message', 'Book deleted successfully' );
+//		return redirect()->route( 'book.index' )->with( 'message', 'Book deleted successfully' );
+		$result = [
+			'success' => TRUE,
+			'message' => __('Book successfully deleted.')
+		];
+		
+		return response()->json($result);
 	}
 }

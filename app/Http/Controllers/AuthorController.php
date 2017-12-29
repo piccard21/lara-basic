@@ -104,6 +104,12 @@ class AuthorController extends Controller {
 	public function destroy( Request $request, Author $author ) {
 		$author->delete();
 
-		return redirect()->route( 'author.index' )->with( 'message', 'Author deleted successfully' );
+//		return redirect()->route( 'author.index' )->with( 'message', 'Author deleted successfully' );
+		$result = [
+			'success' => TRUE,
+			'message' => __('Author successfully deleted.')
+		];
+		
+		return response()->json($result);
 	}
 }
