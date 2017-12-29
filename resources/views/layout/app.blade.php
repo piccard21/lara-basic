@@ -20,7 +20,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
 
 	{{--notifier--}}
-	<link href="js/izitoast/css/iziToast.min.css" rel="stylesheet">
+	<link href="{{ asset('js/izitoast/css/iziToast.min.css') }}" rel="stylesheet">
 
 
 
@@ -46,6 +46,6 @@
 {{--loading-mask--}}
 <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
 {{--notifier--}}
-<script src="js/izitoast/js/iziToast.min.js" type="text/javascript"></script>
+<script src="{{ asset('js/izitoast/js/iziToast.min.js') }}" type="text/javascript"></script>
 </body>
 </html>
