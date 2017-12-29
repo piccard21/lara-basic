@@ -40,7 +40,7 @@
 				                                    {{--class="fa fa-trash-o fa-1x"></i></button>--}}
                                     {{--</form>--}}
                                 {{--</span>--}}
-								<a class="btn btn-danger btn-destroy" data-href="{{ route("example.destroy", ["example" => $example->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+								<a class="btn btn-danger" data-href="{{ route("example.destroy", ["example" => $example->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
                                     <i class="fa fa-trash-o fa-1x"></i>
                                 </a>
                             </span>
@@ -52,5 +52,5 @@
 		<div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
 	</div>
 
-	@include('partials.confirm');
+	@include('partials.confirm-delete');
 @endsection
