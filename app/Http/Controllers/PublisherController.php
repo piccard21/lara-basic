@@ -100,6 +100,12 @@ class PublisherController extends Controller {
 	public function destroy( Publisher $publisher ) {
 		$publisher->delete();
 
-		return redirect()->route( 'publisher.index' )->with( 'message', 'Publisher deleted successfully' );
+//		return redirect()->route( 'publisher.index' )->with( 'message', 'Publisher deleted successfully' );
+		$result = [
+			'success' => TRUE,
+			'message' => __('Publisher successfully deleted.')
+		];
+		
+		return response()->json($result);
 	}
 }

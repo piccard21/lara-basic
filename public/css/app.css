@@ -9717,33 +9717,19 @@ a.text-dark:hover {
   visibility: hidden !important;
 }
 
-.bg-beige {
-  background-color: beige;
-}
-
-.bg-blanchedalmond {
-  background-color: blanchedalmond;
-}
-
-.bg-bisque {
-  background-color: bisque;
-}
-
-.bg-teal {
-  background-color: teal;
-}
-
-.color-wheat {
-  color: wheat;
-}
-
-.color-white {
-  color: white;
-}
-
 .jumbo-custom {
   background-color: #17a2b8;
   color: #fff;
   padding: 2rem 2rem;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.btn-danger,
+.btn-warning,
+.btn-warning {
+  color: #fff !important;
 }
 

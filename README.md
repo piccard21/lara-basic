@@ -983,29 +983,315 @@ public function store( Request $request ) {
 ```    
 
 
+
+## AJAX
+
+- Laravel likes ES6, so we use it
+- Loading-mask, i.e. [busy-load](https://www.npmjs.com/package/busy-load) 
+- Notifier-library, i.e. [iziToast](http://izitoast.marcelodolce.com/)
+- create ES6-utils-module
+
+- **layout/app.blade.php**
+	- for sake of simplicity, the loading-mask will be added via cdn
+	- the notifier will be installed via npm
+	
+```   
+npm install izitoast --save-dev
+```   
+
+- add an entry to **webpack.mix.js**
+
+```   
+mix.js('resources/assets/js/app.js', 'public/js')
+	.copy('resources/assets/img', 'public/img')
+	.copyDirectory('node_modules/izitoast/dist/', 'public/js/izitoast')
+	.sass('resources/assets/sass/app.scss', 'public/css');
+```  
+
+- add the stuff to **app.blade**
+
+```   
+{{--loading-mask--}}
+<link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
+
+{{--notifier--}}
+<link href="js/izitoast/css/iziToast.min.css" rel="stylesheet">
+<script src="js/izitoast/js/iziToast.min.js" type="text/javascript"></script>
+```   
+
+
+
+
+### Exception-Handling for Ajax
+
+- **app/Exceptions/Handler.php**
+
+```   
+public function render($request, Exception $exception)
+{
+    // exception while ajax
+    if($request->ajax() || $request->wantsJson()) {
+	    $msg = !empty($exception->getMessage()) ? $exception->getMessage() : get_class($exception);
+	    $response = array(
+		    'success' => false,
+		    'message' => $msg
+	    );
+	    $status = 200;
+	    return response()->json($response, $status);
+    }
+
+    return parent::render($request, $exception);
+}
+```     
+
+
+### create js
+
+- create folder **js/lib**
+- **app.js**
+
+```
+require('./bootstrap');
+
+import {tools_utils} from './lib/utils.js';
+import {tools_modal} from './lib/modal.js';
+
+
+$(document).ready(function () {
+	tools_utils.init();
+	tools_modal.init();
+});     
+```     
+
+
+- **lib/utils.js**
+
+``` 
+export const tools_utils = {
+
+	init: function () {
+		iziToast.settings({
+			timeout: 5000,
+			transitionIn: 'flipInX',
+			transitionOut: 'flipOutX',
+			position: 'topRight'
+		});
+
+		this.addCsrf();
+	},
+	addCsrf: function () {
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+	},
+	notfiySuccess: function (message, callback) {
+		iziToast.success({
+			message: message,
+			onClosing: function () {
+				callback();
+			}
+		});
+	},
+	notfiyWarning: function (message, callback) {
+		iziToast.warning({
+			message: message,
+			onClosing: function () {
+				callback();
+			}
+		});
+	},
+	notfiyError: function (message, callback) {
+		iziToast.error({
+			message: message,
+			onClosing: function () {
+				callback();
+			}
+		});
+	},
+	notfiyInfo: function (message, callback) {
+		iziToast.info({
+			message: message,
+			onClosing: function () {
+				callback();
+			}
+		});
+	},
+	handleResult: function (result, callback) {
+		if (this.isUndefined(callback)) {
+			callback = this.emptyFn();
+		}
+
+		if (result.success) {
+			if (result && result.message) {
+				tools_utils.notfiySuccess(result.message, callback);
+			}
+		} else {
+			tools_utils.notfiyError(result.message, this.emptyFn());
+		}
+	},
+	isUndefined: function (val) {
+		return typeof val === 'undefined' ? true : false;
+	},
+	emptyFn: function () {},
+	reload: function () {
+		location.reload(true);
+	}
+
+}
+```    
+
+
+- **lib/modal.js**
+
+``` 
+import {tools_utils} from './utils.js';
+
+export const tools_modal = {
+	init: function () {
+		this.confirmDelete($('#modal-confirm-delete'));
+	},
+	confirmDelete: function ($tag) {
+
+		$tag.on('shown.bs.modal', function (e) {
+
+			$(this).find('#btn-confirm-delete-ok').on('click', function () {
+
+				$(".modal-content").busyLoad("show");
+
+				$.ajax({
+					url: $(e.relatedTarget).data('href'),
+					data: {_method: "DELETE"},
+					type: "DELETE",
+					dataType: "json",
+					success: function (result) {
+
+						$(".modal-content").busyLoad("hide");
+						$('#modal-confirm-delete').modal('hide');
+
+						tools_utils.handleResult(result, tools_utils.reload);
+					},
+					error: function (xhr, textStatus, thrownError) {
+						tools_utils.notfiyError(textStatus + '<br>' + thrownError);
+					}
+				});
+
+			});
+		});
+	}
+}
+```     
+
+
+### exchange delete-form in Example 
+
+- uncomment *form* in **example/index.blade.php**
+- add
+
+```   
+<a class="btn btn-danger" data-href="{{ route("example.destroy", ["example" => $example->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+    <i class="fa fa-trash-o fa-1x"></i>
+</a>
+```     
+
+- add modal as a *partial*
+
+```    
+...
+	@include('partials.confirm-delete');
+@endsection
+```     
+ 
+- create folder **partials** below **views**
+- create **confirm-delete.blade.php**
+
+``` 
+<!-- Modal -->
+<div class="modal fade" id="modal-confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete example</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-secondary" data-dismiss="modal">Close</a>
+                <a id="btn-confirm-delete-ok" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+```     
+- add css-rules for cursor inside **sass/_utils.scss**
+
+```
+.btn {
+  cursor: pointer;
+}
+
+.btn-danger, .btn-warning, .btn-warning {
+  color: #fff !important;
+}
+```
+ 
+    
+ 
+ 
+
+- **ExampleController**
+
+	- for testing-purposes throw an exception ... a red notofer should appear
+
+```
+public function destroy(Request $request, Example $example) {
+
+
+//		throw new Exception("Somethnig went terrible wrong");
+
+	$example->delete();
+
+// return redirect()->route('example.index')->with('message', 'Example deleted successfully');
+	
+	$result = [
+		'success' => TRUE,
+		'message' => __('Example successfully deleted.')
+	];
+	
+	return response()->json($result);
+}
+``` 
+
+ 
+
 ## TODO 
 ```   
 ```     
-    
-- AJAX
-    - Exception-Handling
-    
+
+- busy-load import
+	- extract?!?!  
+	
 - Auth
     - migration alter  
+- Middle 
+- Events
+    
 - ServiceProvider
     - app/ app->extend
+    
 - Request Error Msgs + Forms
 
 - model - special pivot table?
-- Middle 
-- Events
 - View::share
 - API
 - queryScopes
-- Tests
 - Language
 - multiple DBs
 - PHPDoc
+- Tests
 
 
 - Carbon

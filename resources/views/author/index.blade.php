@@ -32,14 +32,17 @@
                                 <a class="btn btn-info" href="{{ route("author.show", ["author" => $author->id]) }}">
                                     <i class="fa fa-eye fa-1x"></i>
                                 </a>
-                                <span class="d-inline-block">
-                                    <form action="{{ route('author.destroy',  ["author" => $author->id]) }}"
-                                          method="POST">
-                                        {{ method_field('DELETE') }}
-                                        {{ csrf_field() }}
-                                        <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i class="fa fa-trash-o fa-1x"></i></button>
-                                    </form>
-                                </span>
+                                {{--<span class="d-inline-block">--}}
+                                    {{--<form action="{{ route('author.destroy',  ["author" => $author->id]) }}"--}}
+                                          {{--method="POST">--}}
+                                        {{--{{ method_field('DELETE') }}--}}
+                                        {{--{{ csrf_field() }}--}}
+                                        {{--<button type="submit" class="btn btn-danger" style="cursor: pointer;"><i class="fa fa-trash-o fa-1x"></i></button>--}}
+                                    {{--</form>--}}
+                                {{--</span>--}}
+	                            <a class="btn btn-danger" data-href="{{ route("author.destroy", ["author" => $author->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+                                    <i class="fa fa-trash-o fa-1x"></i>
+                                </a>
                             </span>
                         </div>
                     </li>
@@ -49,5 +52,6 @@
         <div class="d-flex justify-content-center mt-2">{{ $authors->links() }}</div>
     </div>
 
+    @include('partials.confirm-delete')
 
 @endsection

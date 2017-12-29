@@ -32,15 +32,18 @@
                                 <a class="btn btn-info" href="{{ route("publisher.show", ["publisher" => $publisher->id]) }}">
                                     <i class="fa fa-eye fa-1x"></i>
                                 </a>
-                                <span class="d-inline-block">
-                                    <form action="{{ route('publisher.destroy',  ["publisher" => $publisher->id]) }}"
-                                          method="POST">
-                                        {{ method_field('DELETE') }}
-	                                    {{ csrf_field() }}
-	                                    <button type="submit" class="btn btn-danger" style="cursor: pointer;"><i
-				                                    class="fa fa-trash-o fa-1x"></i></button>
-                                    </form>
-                                </span>
+                                {{--<span class="d-inline-block">--}}
+                                    {{--<form action="{{ route('publisher.destroy',  ["publisher" => $publisher->id]) }}"--}}
+                                          {{--method="POST">--}}
+                                        {{--{{ method_field('DELETE') }}--}}
+	                                    {{--{{ csrf_field() }}--}}
+	                                    {{--<button type="submit" class="btn btn-danger" style="cursor: pointer;"><i--}}
+				                                    {{--class="fa fa-trash-o fa-1x"></i></button>--}}
+                                    {{--</form>--}}
+                                {{--</span>--}}
+	                            <a class="btn btn-danger" data-href="{{ route("publisher.destroy", ["publisher" => $publisher->id]) }}" data-toggle="modal" data-target="#modal-confirm-delete">
+                                    <i class="fa fa-trash-o fa-1x"></i>
+                                </a>
                             </span>
 						</div>
 					</li>
@@ -50,5 +53,6 @@
 		<div class="d-flex justify-content-center mt-2">{{ $publishers->links() }}</div>
 	</div>
 
+	@include('partials.confirm-delete')
 
 @endsection
