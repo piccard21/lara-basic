@@ -7,32 +7,38 @@ export const tools_modal = {
     },
     confirmDeleteBS: function ($tag) {
         $tag.on('shown.bs.modal', function (e) {
-            $(this).find('#btn-confirm-delete-ok').on('click', function () {
-
+            $(this).find('#btn-confirm-delete-ok').one('click', function () {
                 $tag.modal('hide');
                 $.busyLoadFull("show");
-
                 $.ajax({
                     url: $(e.relatedTarget).data('href'),
                     data: {_method: "DELETE"},
                     type: "DELETE",
                     dataType: "json",
                     success: function (result) {
-                        $.busyLoadFull("hide");
-                        tools_utils.handleResult(result, tools_utils.reload);
+                        tools_utils.handleResult(result);
+                        $(e.relatedTarget).parents('.list-group-item').remove()
                     },
                     error: function (xhr, textStatus, thrownError) {
                         tools_utils.notfiyError(textStatus + '<br>' + thrownError);
                     }
-                });
+                })
+                    .always(function () {
+                        $.busyLoadFull("hide");
+                    });
 
             });
+        });
+        $tag.on('hide.bs.modal', function (e) {
+            $(this).find('#btn-confirm-delete-ok').off('click');
         });
     },
     confirmDeleteNotify: function ($tag) {
         $tag.on('click', function (e) {
 
-            let deleteCallback = function() {
+            let $currentTag = $(this);
+
+            let deleteCallback = function () {
                 $.busyLoadFull("show");
 
                 $.ajax({
@@ -41,13 +47,16 @@ export const tools_modal = {
                     type: "DELETE",
                     dataType: "json",
                     success: function (result) {
-                        $.busyLoadFull("hide");
-                        tools_utils.handleResult(result, tools_utils.reload);
+                        tools_utils.handleResult(result);
+                        $currentTag.parents('.list-group-item').remove()
                     },
                     error: function (xhr, textStatus, thrownError) {
                         tools_utils.notfiyError(textStatus + '<br>' + thrownError);
                     }
-                });
+                })
+                    .always(function () {
+                        $.busyLoadFull("hide");
+                    });
             };
 
             tools_utils.notifyConfirm(deleteCallback);

@@ -1070,75 +1070,104 @@ $(document).ready(function () {
 ``` 
 export const tools_utils = {
 
-	init: function () {
-		iziToast.settings({
-			timeout: 5000,
-			transitionIn: 'flipInX',
-			transitionOut: 'flipOutX',
-			position: 'topRight'
-		});
+    init: function () {
+        iziToast.settings({
+            timeout: 1000,
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX',
+            position: 'topRight'
+        });
 
-		this.addCsrf();
-	},
-	addCsrf: function () {
-		$.ajaxSetup({
-			headers: {
-				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}
-		});
-	},
-	notfiySuccess: function (message, callback) {
-		iziToast.success({
-			message: message,
-			onClosing: function () {
-				callback();
-			}
-		});
-	},
-	notfiyWarning: function (message, callback) {
-		iziToast.warning({
-			message: message,
-			onClosing: function () {
-				callback();
-			}
-		});
-	},
-	notfiyError: function (message, callback) {
-		iziToast.error({
-			message: message,
-			onClosing: function () {
-				callback();
-			}
-		});
-	},
-	notfiyInfo: function (message, callback) {
-		iziToast.info({
-			message: message,
-			onClosing: function () {
-				callback();
-			}
-		});
-	},
-	handleResult: function (result, callback) {
-		if (this.isUndefined(callback)) {
-			callback = this.emptyFn();
-		}
-
-		if (result.success) {
-			if (result && result.message) {
-				tools_utils.notfiySuccess(result.message, callback);
-			}
-		} else {
-			tools_utils.notfiyError(result.message, this.emptyFn());
-		}
-	},
-	isUndefined: function (val) {
-		return typeof val === 'undefined' ? true : false;
-	},
-	emptyFn: function () {},
-	reload: function () {
-		location.reload(true);
-	}
+        this.addCsrf();
+    },
+    addCsrf: function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    },
+    notfiySuccess: function (message, cb) {
+        iziToast.success({
+            message: message,
+            onClosing: function () {
+                tools_utils.callback(cb);
+            }
+        });
+    },
+    notfiyWarning: function (message, cb) {
+        iziToast.warning({
+            message: message,
+            onClosing: function () {
+                tools_utils.callback(cb);
+            }
+        });
+    },
+    notfiyError: function (message, cb) {
+        iziToast.error({
+            message: message,
+            onClosing: function () {
+                tools_utils.callback(cb);
+            }
+        });
+    },
+    notfiyInfo: function (message, cb) {
+        iziToast.info({
+            message: message,
+            onClosing: function () {
+                tools_utils.callback(cb);
+            }
+        });
+    },
+    callback: function(cb) {
+        if (!this.isUndefined(cb)) {
+            cb();
+        }
+    },
+    getCallback: function(cb) {
+        if (this.isUndefined(cb)) {
+            cb = this.emptyFn();
+        }
+        return cb;
+    },
+    notifyConfirm: function (cb) {
+        iziToast.question({
+            timeout: 10000,
+            close: false,
+            overlay: true,
+            toastOnce: true,
+            id: 'question',
+            zindex: 999,
+            message: 'Are you sure about that?',
+            position: 'center',
+            buttons: [
+                ['<button><b>YES</b></button>', function (instance, toast) {
+                    instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
+                    this.callback(cb);
+                }, true],
+                ['<button>NO</button>', function (instance, toast) {
+                    instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
+                }]
+            ]
+        });
+    },
+    handleResult: function (result, cb) {
+        if (result.success) {
+            if (result && result.message) {
+                tools_utils.notfiySuccess(result.message, this.getCallback(cb));
+            }
+        } else {
+            tools_utils.notfiyError(result.message, this.emptyFn());
+        }
+    },
+    isUndefined: function (val) {
+        return typeof val === 'undefined' ? true : false;
+    },
+    emptyFn: function () {
+    },
+    reload: function () {
+        location.reload(true);
+    }
 
 }
 ```    
@@ -1156,34 +1185,32 @@ export const tools_modal = {
 	init: function () {
 		this.confirmDelete($('#modal-confirm-delete'));
 	},
-	confirmDelete: function ($tag) {
-
-		$tag.on('shown.bs.modal', function (e) {
-
-			$(this).find('#btn-confirm-delete-ok').on('click', function () {
-
-				$(".modal-content").busyLoad("show");
-
-				$.ajax({
-					url: $(e.relatedTarget).data('href'),
-					data: {_method: "DELETE"},
-					type: "DELETE",
-					dataType: "json",
-					success: function (result) {
-
-						$(".modal-content").busyLoad("hide");
-						$('#modal-confirm-delete').modal('hide');
-
-						tools_utils.handleResult(result, tools_utils.reload);
-					},
-					error: function (xhr, textStatus, thrownError) {
-						tools_utils.notfiyError(textStatus + '<br>' + thrownError);
-					}
-				});
-
-			});
-		});
-	}
+     confirmDeleteBS: function ($tag) {
+         $tag.on('shown.bs.modal', function (e) {
+             $(this).find('#btn-confirm-delete-ok').one('click', function () {
+                 $tag.modal('hide');
+                 $.busyLoadFull("show");
+ 
+                 $.ajax({
+                     url: $(e.relatedTarget).data('href'),
+                     data: {_method: "DELETE"},
+                     type: "DELETE",
+                     dataType: "json",
+                     success: function (result) {
+                         tools_utils.handleResult(result);
+                         $(e.relatedTarget).parents('.list-group-item').remove()
+                     },
+                     error: function (xhr, textStatus, thrownError) {
+                         tools_utils.notfiyError(textStatus + '<br>' + thrownError);
+                     }
+                 })
+                     .always(function () {
+                         $.busyLoadFull("hide");
+                     });
+ 
+             });
+         });
+     },
 }
 ```     
 
@@ -1260,9 +1287,9 @@ public function destroy(Request $request, Example $example) {
 }
 ``` 
 
-### Notifier-confirm
+### Notifier-confirm 
 
-- create a notifier-confirm-modal in **Books**-project
+- create a notifier-confirm-modal 
  
 - **index.blade.php** 
 
@@ -1287,7 +1314,9 @@ init: function () {
 confirmDeleteNotify: function ($tag) {
     $tag.on('click', function (e) {
 
-        let deleteCallback = function() {
+        let $currentTag = $(this);
+
+        let deleteCallback = function () {
             $.busyLoadFull("show");
 
             $.ajax({
@@ -1296,13 +1325,16 @@ confirmDeleteNotify: function ($tag) {
                 type: "DELETE",
                 dataType: "json",
                 success: function (result) {
-                    $.busyLoadFull("hide");
-                    tools_utils.handleResult(result, tools_utils.reload);
+                    tools_utils.handleResult(result);
+                    $currentTag.parents('.list-group-item').remove()
                 },
                 error: function (xhr, textStatus, thrownError) {
                     tools_utils.notfiyError(textStatus + '<br>' + thrownError);
                 }
-            });
+            })
+                .always(function () {
+                    $.busyLoadFull("hide");
+                });
         };
 
         tools_utils.notifyConfirm(deleteCallback);
@@ -1315,7 +1347,7 @@ confirmDeleteNotify: function ($tag) {
 - **lib/utils.js** 
 
 ```   
-notifyConfirm: function (callback) {
+notifyConfirm: function (cb) {
     iziToast.question({
         timeout: 10000,
         close: false,
@@ -1328,7 +1360,7 @@ notifyConfirm: function (callback) {
         buttons: [
             ['<button><b>YES</b></button>', function (instance, toast) {
                 instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
-                callback();
+                this.callback(cb);
             }, true],
             ['<button>NO</button>', function (instance, toast) {
                 instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');

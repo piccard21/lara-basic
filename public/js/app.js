@@ -13484,7 +13484,7 @@ var tools_utils = {
 
     init: function init() {
         iziToast.settings({
-            timeout: 5000,
+            timeout: 1000,
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX',
             position: 'topRight'
@@ -13499,39 +13499,50 @@ var tools_utils = {
             }
         });
     },
-    notfiySuccess: function notfiySuccess(message, callback) {
+    notfiySuccess: function notfiySuccess(message, cb) {
         iziToast.success({
             message: message,
             onClosing: function onClosing() {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyWarning: function notfiyWarning(message, callback) {
+    notfiyWarning: function notfiyWarning(message, cb) {
         iziToast.warning({
             message: message,
             onClosing: function onClosing() {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyError: function notfiyError(message, callback) {
+    notfiyError: function notfiyError(message, cb) {
         iziToast.error({
             message: message,
             onClosing: function onClosing() {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyInfo: function notfiyInfo(message, callback) {
+    notfiyInfo: function notfiyInfo(message, cb) {
         iziToast.info({
             message: message,
             onClosing: function onClosing() {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notifyConfirm: function notifyConfirm(callback) {
+    callback: function callback(cb) {
+        if (!this.isUndefined(cb)) {
+            cb();
+        }
+    },
+    getCallback: function getCallback(cb) {
+        if (this.isUndefined(cb)) {
+            cb = this.emptyFn();
+        }
+        return cb;
+    },
+    notifyConfirm: function notifyConfirm(cb) {
         iziToast.question({
             timeout: 10000,
             close: false,
@@ -13543,23 +13554,19 @@ var tools_utils = {
             position: 'center',
             buttons: [['<button><b>YES</b></button>', function (instance, toast) {
                 instance.hide(toast, { transitionOut: 'fadeOut' }, 'button');
-                callback();
+                tools_utils.callback(cb);
             }, true], ['<button>NO</button>', function (instance, toast) {
                 instance.hide(toast, { transitionOut: 'fadeOut' }, 'button');
             }]]
         });
     },
-    handleResult: function handleResult(result, callback) {
-        if (this.isUndefined(callback)) {
-            callback = this.emptyFn();
-        }
-
+    handleResult: function handleResult(result, cb) {
         if (result.success) {
             if (result && result.message) {
-                tools_utils.notfiySuccess(result.message, callback);
+                this.notfiySuccess(result.message, this.getCallback(cb));
             }
         } else {
-            tools_utils.notfiyError(result.message, this.emptyFn());
+            this.notfiyError(result.message, this.emptyFn());
         }
     },
     isUndefined: function isUndefined(val) {
@@ -35794,29 +35801,34 @@ var tools_modal = {
     },
     confirmDeleteBS: function confirmDeleteBS($tag) {
         $tag.on('shown.bs.modal', function (e) {
-            $(this).find('#btn-confirm-delete-ok').on('click', function () {
-
+            $(this).find('#btn-confirm-delete-ok').one('click', function () {
                 $tag.modal('hide');
                 $.busyLoadFull("show");
-
                 $.ajax({
                     url: $(e.relatedTarget).data('href'),
                     data: { _method: "DELETE" },
                     type: "DELETE",
                     dataType: "json",
                     success: function success(result) {
-                        $.busyLoadFull("hide");
-                        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].handleResult(result, __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].reload);
+                        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].handleResult(result);
+                        $(e.relatedTarget).parents('.list-group-item').remove();
                     },
                     error: function error(xhr, textStatus, thrownError) {
                         __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].notfiyError(textStatus + '<br>' + thrownError);
                     }
+                }).always(function () {
+                    $.busyLoadFull("hide");
                 });
             });
+        });
+        $tag.on('hide.bs.modal', function (e) {
+            $(this).find('#btn-confirm-delete-ok').off('click');
         });
     },
     confirmDeleteNotify: function confirmDeleteNotify($tag) {
         $tag.on('click', function (e) {
+
+            var $currentTag = $(this);
 
             var deleteCallback = function deleteCallback() {
                 $.busyLoadFull("show");
@@ -35827,12 +35839,14 @@ var tools_modal = {
                     type: "DELETE",
                     dataType: "json",
                     success: function success(result) {
-                        $.busyLoadFull("hide");
-                        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].handleResult(result, __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].reload);
+                        __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].handleResult(result);
+                        $currentTag.parents('.list-group-item').remove();
                     },
                     error: function error(xhr, textStatus, thrownError) {
                         __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].notfiyError(textStatus + '<br>' + thrownError);
                     }
+                }).always(function () {
+                    $.busyLoadFull("hide");
                 });
             };
 

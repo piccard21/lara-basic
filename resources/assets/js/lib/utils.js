@@ -2,7 +2,7 @@ export const tools_utils = {
 
     init: function () {
         iziToast.settings({
-            timeout: 5000,
+            timeout: 1000,
             transitionIn: 'flipInX',
             transitionOut: 'flipOutX',
             position: 'topRight'
@@ -17,39 +17,50 @@ export const tools_utils = {
             }
         });
     },
-    notfiySuccess: function (message, callback) {
+    notfiySuccess: function (message, cb) {
         iziToast.success({
             message: message,
             onClosing: function () {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyWarning: function (message, callback) {
+    notfiyWarning: function (message, cb) {
         iziToast.warning({
             message: message,
             onClosing: function () {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyError: function (message, callback) {
+    notfiyError: function (message, cb) {
         iziToast.error({
             message: message,
             onClosing: function () {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notfiyInfo: function (message, callback) {
+    notfiyInfo: function (message, cb) {
         iziToast.info({
             message: message,
             onClosing: function () {
-                callback();
+                tools_utils.callback(cb);
             }
         });
     },
-    notifyConfirm: function (callback) {
+    callback: function(cb) {
+        if (!this.isUndefined(cb)) {
+            cb();
+        }
+    },
+    getCallback: function(cb) {
+        if (this.isUndefined(cb)) {
+            cb = this.emptyFn();
+        }
+        return cb;
+    },
+    notifyConfirm: function (cb) {
         iziToast.question({
             timeout: 10000,
             close: false,
@@ -62,7 +73,7 @@ export const tools_utils = {
             buttons: [
                 ['<button><b>YES</b></button>', function (instance, toast) {
                     instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
-                    callback();
+                    tools_utils.callback(cb);
                 }, true],
                 ['<button>NO</button>', function (instance, toast) {
                     instance.hide(toast, {transitionOut: 'fadeOut'}, 'button');
@@ -70,17 +81,13 @@ export const tools_utils = {
             ]
         });
     },
-    handleResult: function (result, callback) {
-        if (this.isUndefined(callback)) {
-            callback = this.emptyFn();
-        }
-
+    handleResult: function (result, cb) {
         if (result.success) {
             if (result && result.message) {
-                tools_utils.notfiySuccess(result.message, callback);
+                this.notfiySuccess(result.message, this.getCallback(cb));
             }
         } else {
-            tools_utils.notfiyError(result.message, this.emptyFn());
+            this.notfiyError(result.message, this.emptyFn());
         }
     },
     isUndefined: function (val) {
