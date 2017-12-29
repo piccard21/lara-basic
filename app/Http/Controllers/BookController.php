@@ -48,7 +48,8 @@ class BookController extends Controller {
 			'title'       => 'required|min:1|max:121',
 			'publisher'   => 'required|integer',
 			'publishedAt' => 'required|date_format:"Y,m,d"',
-			'authors.*'   => 'required|integer',
+			'authors'   => 'required|array',
+			'authors.*'   => 'required|integer'
 		] );
 
 		DB::transaction( function () use ( $request ) {
@@ -110,7 +111,8 @@ class BookController extends Controller {
 			'title'       => 'required|min:1|max:121',
 			'publisher'   => 'required|integer',
 			'publishedAt' => 'required|date_format:"Y,m,d"',
-			'authors.*'   => 'required|integer',
+			'authors'   => 'required|array',
+			'authors.*'   => 'required|integer'
 		] );
 
 		DB::transaction( function () use ( $book, $request ) {
