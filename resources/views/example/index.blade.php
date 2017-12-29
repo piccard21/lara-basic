@@ -52,5 +52,5 @@
 		<div class="d-flex justify-content-center mt-2">{{ $examples->links() }}</div>
 	</div>
 
-	@include('partials.confirm-delete');
+	@include('partials.confirm-delete')
 @endsection
