@@ -35803,6 +35803,7 @@ var tools_modal = {
             $(this).find('#btn-confirm-delete-ok').one('click', function () {
                 $tag.modal('hide');
                 $.busyLoadFull("show");
+
                 $.ajax({
                     url: $(e.relatedTarget).data('href'),
                     data: { _method: "DELETE" },
@@ -35826,9 +35827,7 @@ var tools_modal = {
     },
     confirmDeleteNotify: function confirmDeleteNotify($tag) {
         $tag.on('click', function (e) {
-
             var $currentTag = $(this);
-
             var deleteCallback = function deleteCallback() {
                 $.busyLoadFull("show");
 
@@ -35839,7 +35838,10 @@ var tools_modal = {
                     dataType: "json",
                     success: function success(result) {
                         __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].handleResult(result);
-                        $currentTag.parents('.list-group-item').remove();
+                        var lgi = $currentTag.parents('.list-group-item');
+                        lgi.slideUp(1000, function () {
+                            lgi.remove();
+                        });
                     },
                     error: function error(xhr, textStatus, thrownError) {
                         __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].notfiyError(textStatus + '<br>' + thrownError);
