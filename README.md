@@ -1529,7 +1529,7 @@ php artisan migrate:refresh --seed
 
 ### controller
 
-- add to store() the following validation-rules
+- store() 
 ```   
 $this->validate( $request, [
     'title'       => 'required|min:1|max:121',
@@ -1538,9 +1538,8 @@ $this->validate( $request, [
     'authors.*'   => 'required|integer',
     'description'   => 'nullable|string',
     'publishedAt' => 'nullable|date_format:"Y,m,d"',
-    'isbn'   => 'nullable|integer|size:10',
+	'isbn'   => 'nullable|digits:10'
 ] );
-
 
 DB::transaction( function () use ( $request ) {
 
@@ -1556,6 +1555,30 @@ DB::transaction( function () use ( $request ) {
 } );
 ```   
 
+- update()
+```   
+$this->validate( $request, [
+    'title'       => 'required|min:1|max:121',
+    'publisher'   => 'required|integer',
+    'authors'   => 'required|array',
+    'authors.*'   => 'required|integer',
+    'description'   => 'nullable|string',
+    'publishedAt' => 'nullable|date_format:"Y,m,d"',
+	'isbn'   => 'nullable|digits:10'
+] ); 
+ 	
+DB::transaction( function () use ( $book, $request ) {
+    $book->authors()->sync( $request->input( 'authors' ) );
+
+    $book->title        = $request->input( 'title' );
+    $book->publisher_id = $request->input( 'publisher' );
+    $book->published_at = $request->input( 'publishedAt' );
+    $book->description = $request->input( 'description' );
+    $book->isbn = $request->input( 'isbn' );
+    $book->save();
+} );
+
+```   
 
 
 ## Adding Authentication & Authorization 
