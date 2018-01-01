@@ -16,7 +16,7 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->increments('id');
 	        $table->string('title');
-	        $table->date('published_at');
+	        $table->date('published_at')->nullable();
 	        $table->integer('publisher_id')->unsigned();
 	        $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');
             $table->timestamps();

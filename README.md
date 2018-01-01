@@ -750,7 +750,7 @@ public function up()
     Schema::create('books', function (Blueprint $table) {
         $table->increments('id');
         $table->string('title');
-        $table->date('published_at');
+        $table->date('published_at')->nullable();
         $table->integer('publisher_id')->unsigned();
         $table->foreign('publisher_id')->references('id')->on('publishers')->onDelete('cascade');
         $table->timestamps();
@@ -954,7 +954,7 @@ public function store( Request $request ) {
     $this->validate( $request, [
         'title'       => 'required|min:1|max:121',
         'publisher'   => 'required|integer',
-        'publishedAt' => 'required|date_format:"Y,m,d"',
+        'publishedAt' => 'nullable|date_format:"Y,m,d"',
         'authors'   => 'required|array',
         'authors.*'   => 'required|integer'
     ] );
@@ -1366,24 +1366,19 @@ php artisan make:migration add_columns_to_books --table="books"
 ```     
 
 ```   
-public function up() {
-    Schema::table( 'books', function ( Blueprint $table ) {
-        $table->longText( 'description' )->nullable();
-        $table->integer( 'isbn' )->nullable();
-    } );
-}
-
-/**
- * Reverse the migrations.
- *
- * @return void
- */
-public function down() {
-    Schema::table( 'books', function ( Blueprint $table ) {
-        $table->dropColumn( 'description' );
-        $table->dropColumn( 'isbn' );
-    } );
-}
+	public function up() {
+		Schema::table( 'books', function ( Blueprint $table ) {
+			$table->longText( 'description' )->nullable();
+			$table->string( 'isbn' , 10)->nullable();
+		} );
+	} 
+	
+	public function down() {
+		Schema::table( 'books', function ( Blueprint $table ) {
+			$table->dropColumn( 'description' );
+			$table->dropColumn( 'isbn' );
+		} );
+	}
 ```   
 
 - check if everything works 
@@ -1395,13 +1390,172 @@ php artisan migrate:rollback
 php artisan migrate
 ```   
 
+### model
+ 
+```   
+protected $fillable = ['title', 'published_at', 'publisher_id', 'description', 'isbn'];
+```   
+
+### factory
+ 
+```   
+$factory->define(App\Book::class, function (Faker $faker) {
+    return [
+	    'title' => $faker->sentence,
+	    'published_at' =>  $faker->date('Y,m,d'),
+	    'description' => $faker->text,
+	    'isbn' => $faker->isbn10
+    ];
+});
+```   
+
+- check if everything worked
+```   
+php artisan migrate:refresh --seed 
+```   
+
+
 ### views
 
-#### create
 
+#### book.create
 
+- add the two fields 
+
+```   
+<div class="form-group">
+    <label for="bookDescription">Description</label>
+    <textarea class="form-control" id="bookDescription" rows="3" name="description"></textarea>
+</div>
+<div class="form-group">
+    <label for="bookPublishedAt">ISBN</label>
+    <input type="text" class="form-control" id="bookIsbn" placeholder="add ISBN" name="isbn" value="{{ old('isbn') }}">
+    <small id="textHelp" class="form-text text-muted">10 digits</small>
+</div>  
+```   
+ 
 
 #### edit
+```   
+<div class="form-group">
+    <label for="bookDescription">Description</label>
+    <textarea class="form-control" id="bookDescription" rows="3" name="description">{{ $book->description }}</textarea>
+</div>
+<div class="form-group">
+    <label for="bookPublishedAt">ISBN</label>
+    <input type="text" class="form-control" id="bookIsbn" placeholder="add ISBN" name="isbn" value="{{ $book->isbn }}">
+    <small id="textHelp" class="form-text text-muted">10 digits</small>
+</div>
+```     
+
+
+#### show 
+```  
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Author</th>
+        <th scope="col">Publisher</th>
+        <th scope="col">Date</th>
+        <th scope="col">ISBN</th>
+        <th scope="col">Description</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ $book->authors->implode('lastname', '/')  }}</td>
+            <td>{{ $book->publisher->name }}</td>
+            <td>{{ $book->published_at }}</td>
+            <td>{{ $book->isbn }}</td>
+            <td>
+                <a class="btn btn-info" href="#" data-description="{{ $book->description }}" data-toggle="modal" data-target="#modal-book-description">
+                    <i class="fa fa-eye fa-1x"></i>
+                </a>
+
+            </td>
+
+        </tr>
+    </tbody>
+</table> 
+...
+
+	@include('partials.book-description')
+@endsection
+```     
+
+- create **book-description.blade.php** inside **partials**
+
+```  
+<!-- Modal -->
+<div class="modal fade" id="modal-book-description">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Description</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="book-description"></p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline-secondary" data-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>
+```  
+
+- **modal.js**
+
+```  
+    init: function () {
+        this.confirmDeleteBS($('#modal-confirm-delete'));
+        this.confirmDeleteNotify($('.btn-confirm-delete'));
+        this.showDescriptionBS($('#modal-book-description'));
+    },
+    ...
+    
+    
+    showDescriptionBS: function ($tag) {
+        $tag.on('shown.bs.modal', function (e) {
+            let desc = $(e.relatedTarget).data('description');
+            console.info(desc);
+            $(this).find('.modal-body .book-description').html(desc);
+        });
+    }
+```  
+
+### controller
+
+- add to store() the following validation-rules
+```   
+$this->validate( $request, [
+    'title'       => 'required|min:1|max:121',
+    'publisher'   => 'required|integer',
+    'authors'   => 'required|array',
+    'authors.*'   => 'required|integer',
+    'description'   => 'nullable|string',
+    'publishedAt' => 'nullable|date_format:"Y,m,d"',
+    'isbn'   => 'nullable|integer|size:10',
+] );
+
+
+DB::transaction( function () use ( $request ) {
+
+    $book = Book::create( [
+        'title'        => $request->input( 'title' ),
+        'publisher_id' => $request->input( 'publisher' ),
+        'published_at' => $request->input( 'publishedAt' ),
+        'description' => $request->input( 'description' ),
+        'isbn' => $request->input( 'isbn' )
+    ] );
+
+    $book->authors()->attach( $request->input( 'authors' ) );
+} );
+```   
+
 
 
 ## Adding Authentication & Authorization 
