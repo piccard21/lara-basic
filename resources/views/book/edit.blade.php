@@ -40,6 +40,15 @@
 				<input type="text" class="form-control" id="bookPublishedAt" value=" {{ str_replace("-", ",",$book->published_at) }}" name="publishedAt">
 				<small id="textHelp" class="form-text text-muted">Y,m,d</small>
 			</div>
+			<div class="form-group">
+				<label for="bookDescription">Description</label>
+				<textarea class="form-control" id="bookDescription" rows="3" name="description">{{ $book->description }}</textarea>
+			</div>
+			<div class="form-group">
+				<label for="bookPublishedAt">ISBN</label>
+				<input type="text" class="form-control" id="bookIsbn" placeholder="add ISBN" name="isbn" value="{{ $book->isbn }}">
+				<small id="textHelp" class="form-text text-muted">10 digits</small>
+			</div>
 			<button type="submit" class="btn btn-primary">Update</button>
 		</form>
 	</div>

@@ -4,6 +4,7 @@ export const tools_modal = {
     init: function () {
         this.confirmDeleteBS($('#modal-confirm-delete'));
         this.confirmDeleteNotify($('.btn-confirm-delete'));
+        this.showDescriptionBS($('#modal-book-description'));
     },
     confirmDeleteBS: function ($tag) {
         $tag.on('shown.bs.modal', function (e) {
@@ -64,5 +65,12 @@ export const tools_modal = {
             tools_utils.notifyConfirm(deleteCallback);
 
         });
-    }
+    },
+    showDescriptionBS: function ($tag) {
+        $tag.on('shown.bs.modal', function (e) {
+            let desc = $(e.relatedTarget).data('description');
+            console.info(desc);
+            $(this).find('.modal-body .book-description').html(desc);
+        });
+    },
 }

@@ -5,8 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model {
-	
-	protected $fillable = ['title', 'published_at', 'publisher_id'];
+
+	protected $fillable = ['title', 'published_at', 'publisher_id', 'description', 'isbn'];
 	
 	public function publisher() {
 		return $this->belongsTo('App\Publisher');

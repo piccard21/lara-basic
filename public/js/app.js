@@ -35797,6 +35797,7 @@ var tools_modal = {
     init: function init() {
         this.confirmDeleteBS($('#modal-confirm-delete'));
         this.confirmDeleteNotify($('.btn-confirm-delete'));
+        this.showDescriptionBS($('#modal-book-description'));
     },
     confirmDeleteBS: function confirmDeleteBS($tag) {
         $tag.on('shown.bs.modal', function (e) {
@@ -35852,6 +35853,13 @@ var tools_modal = {
             };
 
             __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* tools_utils */].notifyConfirm(deleteCallback);
+        });
+    },
+    showDescriptionBS: function showDescriptionBS($tag) {
+        $tag.on('shown.bs.modal', function (e) {
+            var desc = $(e.relatedTarget).data('description');
+            console.info(desc);
+            $(this).find('.modal-body .book-description').html(desc);
         });
     }
 };

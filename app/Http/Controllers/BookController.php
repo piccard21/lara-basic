@@ -47,8 +47,11 @@ class BookController extends Controller {
 		$this->validate( $request, [
 			'title'       => 'required|min:1|max:121',
 			'publisher'   => 'required|integer',
-			'publishedAt' => 'required|date_format:"Y,m,d"',
+			'authors'   => 'required|array',
 			'authors.*'   => 'required|integer',
+			'description'   => 'nullable|string',
+			'publishedAt' => 'nullable|date_format:"Y,m,d"',
+			'isbn'   => 'nullable|digits:10'
 		] );
 
 		DB::transaction( function () use ( $request ) {
@@ -56,7 +59,9 @@ class BookController extends Controller {
 			$book = Book::create( [
 				'title'        => $request->input( 'title' ),
 				'publisher_id' => $request->input( 'publisher' ),
-				'published_at' => $request->input( 'publishedAt' )
+				'published_at' => $request->input( 'publishedAt' ),
+				'description' => $request->input( 'description' ),
+				'isbn' => $request->input( 'isbn' )
 			] );
 
 			$book->authors()->attach( $request->input( 'authors' ) );
@@ -109,8 +114,11 @@ class BookController extends Controller {
 		$this->validate( $request, [
 			'title'       => 'required|min:1|max:121',
 			'publisher'   => 'required|integer',
-			'publishedAt' => 'required|date_format:"Y,m,d"',
+			'authors'   => 'required|array',
 			'authors.*'   => 'required|integer',
+			'description'   => 'nullable|string',
+			'publishedAt' => 'nullable|date_format:"Y,m,d"',
+			'isbn'   => 'nullable|digits:10'
 		] );
 
 		DB::transaction( function () use ( $book, $request ) {
@@ -119,6 +127,8 @@ class BookController extends Controller {
 			$book->title        = $request->input( 'title' );
 			$book->publisher_id = $request->input( 'publisher' );
 			$book->published_at = $request->input( 'publishedAt' );
+			$book->description = $request->input( 'description' );
+			$book->isbn = $request->input( 'isbn' );
 			$book->save();
 		} );
 
