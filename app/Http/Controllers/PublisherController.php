@@ -46,7 +46,7 @@ class PublisherController extends Controller {
 			'name.between' => 'The name has to be between :min - :max characters long', // specific field
 		];
 
-		$validator = Validator::make($request->all(), [
+		Validator::make($request->all(), [
 			'name' => 'required|between:1,121',
 		], $messages)->validate();
 
