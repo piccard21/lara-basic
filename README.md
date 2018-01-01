@@ -1359,6 +1359,7 @@ notifyConfirm: function (cb) {
 - alter the books-table by adding 2 columns
     - description
     - isbn
+- this is only necassary if you cannot destroy the existing table    
 
 
 ```   
@@ -1369,7 +1370,7 @@ php artisan make:migration add_columns_to_books --table="books"
 	public function up() {
 		Schema::table( 'books', function ( Blueprint $table ) {
 			$table->longText( 'description' )->nullable();
-			$table->string( 'isbn' , 10)->nullable();
+			$table->string( 'isbn' , 10)->nullable()->unique();
 		} );
 	} 
 	
@@ -1577,9 +1578,36 @@ DB::transaction( function () use ( $book, $request ) {
     $book->isbn = $request->input( 'isbn' );
     $book->save();
 } );
-
 ```   
 
+
+
+## Custom Error Messages
+### Simple - create VAlidator manually
+
+- in ** PublisherController**
+
+```  
+	public function store( Request $request ) {
+//		$this->validate( $request, [
+//			'name' => 'required|min:1|max:121'
+//		] );
+
+		$messages = [
+			'required' => 'The :attribute field is required.',
+//			'between' => 'The :attribute value :input is not between :min - :max.',
+			'name.between' => 'The name has to be between :min - :max characters long', // specific field
+		];
+
+		$validator = Validator::make($request->all(), [
+			'name' => 'required|between:1,121',
+		], $messages)->validate();
+		...
+```  
+
+
+## Request ding
+- book
 
 ## Adding Authentication & Authorization 
 
@@ -1592,7 +1620,7 @@ DB::transaction( function () use ( $book, $request ) {
 - an admin can update a book
 - an admin can delete a book
 
-- an admin can update a book
+- an editor can update a book
 - nur description?!? can()
  
 
@@ -1626,7 +1654,7 @@ DB::transaction( function () use ( $book, $request ) {
 - PHPDoc
 - Tests
 
-
+- Cmds
 - Carbon
 
 ```  
