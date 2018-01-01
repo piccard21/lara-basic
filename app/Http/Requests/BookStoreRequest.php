@@ -39,7 +39,7 @@ class BookStoreRequest extends FormRequest
 	/**
 	 * apply logic
 	 */
-    public function persist() {
+    public function store() {
 
 	    DB::transaction( function () {
 
@@ -53,6 +53,21 @@ class BookStoreRequest extends FormRequest
 
 		    $book->authors()->attach( $this->input( 'authors' ) );
 	    } );
+    }
+
+    public function update(Book $book) {
+
+	    DB::transaction( function () use ( $book  ) {
+		    $book->authors()->sync( $this->input( 'authors' ) );
+
+		    $book->title        = $this->input( 'title' );
+		    $book->publisher_id = $this->input( 'publisher' );
+		    $book->published_at = $this->input( 'publishedAt' );
+		    $book->description = $this->input( 'description' );
+		    $book->isbn = $this->input( 'isbn' );
+		    $book->save();
+	    } );
+
     }
 
 	/**
