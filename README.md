@@ -1583,7 +1583,8 @@ DB::transaction( function () use ( $book, $request ) {
 
 
 ## Custom Error Messages
-### Simple - create VAlidator manually
+
+### simple: create validator manually
 
 - in ** PublisherController**
 
@@ -1606,8 +1607,10 @@ DB::transaction( function () use ( $book, $request ) {
 ```  
 
 
-## Request ding
-- book
+## more complex: form request
+
+
+
 
 ## Adding Authentication & Authorization 
 

@@ -43,7 +43,7 @@ class PublisherController extends Controller {
 		$messages = [
 			'required' => 'The :attribute field is required.',
 //			'between' => 'The :attribute value :input is not between :min - :max.',
-			'name.between' => 'The name has to be between :min - :max characters long',
+			'name.between' => 'The name has to be between :min - :max characters long', // specific field
 		];
 
 		$validator = Validator::make($request->all(), [
