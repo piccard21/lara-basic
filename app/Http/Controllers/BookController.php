@@ -7,6 +7,7 @@ use App\Publisher;
 use App\Author;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\BookStoreRequest;
 use Mockery\Exception;
 
 class BookController extends Controller {
@@ -43,29 +44,31 @@ class BookController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store( Request $request ) {
-		$this->validate( $request, [
-			'title'       => 'required|min:1|max:121',
-			'publisher'   => 'required|integer',
-			'authors'   => 'required|array',
-			'authors.*'   => 'required|integer',
-			'description'   => 'nullable|string',
-			'publishedAt' => 'nullable|date_format:"Y,m,d"',
-			'isbn'   => 'nullable|digits:10'
-		] );
+	public function store( BookStoreRequest $request ) {
+//		$this->validate( $request, [
+//			'title'       => 'required|min:1|max:121',
+//			'publisher'   => 'required|integer',
+//			'authors'   => 'required|array',
+//			'authors.*'   => 'required|integer',
+//			'description'   => 'nullable|string',
+//			'publishedAt' => 'nullable|date_format:"Y,m,d"',
+//			'isbn'   => 'nullable|digits:10'
+//		] );
 
-		DB::transaction( function () use ( $request ) {
+//		DB::transaction( function () use ( $request ) {
+//
+//			$book = Book::create( [
+//				'title'        => $request->input( 'title' ),
+//				'publisher_id' => $request->input( 'publisher' ),
+//				'published_at' => $request->input( 'publishedAt' ),
+//				'description' => $request->input( 'description' ),
+//				'isbn' => $request->input( 'isbn' )
+//			] );
+//
+//			$book->authors()->attach( $request->input( 'authors' ) );
+//		} );
 
-			$book = Book::create( [
-				'title'        => $request->input( 'title' ),
-				'publisher_id' => $request->input( 'publisher' ),
-				'published_at' => $request->input( 'publishedAt' ),
-				'description' => $request->input( 'description' ),
-				'isbn' => $request->input( 'isbn' )
-			] );
-
-			$book->authors()->attach( $request->input( 'authors' ) );
-		} );
+		$request->persist();
 
 		return redirect()->route( 'book.index' )->with( 'message', 'Book created successfully' );
 	}

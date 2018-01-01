@@ -1359,6 +1359,7 @@ notifyConfirm: function (cb) {
 - alter the books-table by adding 2 columns
     - description
     - isbn
+- this is only necassary if you cannot destroy the existing table    
 
 
 ```   
@@ -1369,7 +1370,7 @@ php artisan make:migration add_columns_to_books --table="books"
 	public function up() {
 		Schema::table( 'books', function ( Blueprint $table ) {
 			$table->longText( 'description' )->nullable();
-			$table->string( 'isbn' , 10)->nullable();
+			$table->string( 'isbn' , 10)->nullable()->unique();
 		} );
 	} 
 	
@@ -1577,9 +1578,121 @@ DB::transaction( function () use ( $book, $request ) {
     $book->isbn = $request->input( 'isbn' );
     $book->save();
 } );
-
 ```   
 
+
+
+## Custom Error Messages
+
+### simple: create validator manually
+
+- in ** PublisherController**
+
+```  
+	public function store( Request $request ) {
+//		$this->validate( $request, [
+//			'name' => 'required|min:1|max:121'
+//		] );
+
+		$messages = [
+			'required' => 'The :attribute field is required.',
+//			'between' => 'The :attribute value :input is not between :min - :max.',
+			'name.between' => 'The name has to be between :min - :max characters long', // specific field
+		];
+
+		Validator::make($request->all(), [
+			'name' => 'required|between:1,121',
+		], $messages)->validate();
+		...
+```  
+
+
+## more complex: form request
+
+```  
+php artisan make:request BookStoreRequest
+```  
+
+- copy rules over 
+
+```  
+public function authorize()
+{
+    return true;
+}
+ 
+public function rules()
+{
+    return [
+        'title'       => 'required|min:1|max:121',
+        'publisher'   => 'required|integer',
+        'authors'   => 'required|array',
+        'authors.*'   => 'required|integer',
+        'description'   => 'nullable|string',
+        'publishedAt' => 'nullable|date_format:"Y,m,d"',
+        'isbn'   => 'nullable|digits:10'
+    ];
+}
+
+```  
+
+- typeHint new request-class
+
+```  
+use App\Http\Requests\BookStoreRequest;
+...
+	public function store( BookStoreRequest $request ) {
+		// moved to BookStoreRequest
+//		$this->validate( $request, [
+//			'title'       => 'required|min:1|max:121',
+//			'publisher'   => 'required|integer',
+//			'authors'   => 'required|array',
+//			'authors.*'   => 'required|integer',
+//			'description'   => 'nullable|string',
+//			'publishedAt' => 'nullable|date_format:"Y,m,d"',
+//			'isbn'   => 'nullable|digits:10'
+//		] );
+```  
+
+- moving logic to request-class 
+    - exchange $request with $this
+```  
+public function persist() {
+
+	    DB::transaction( function () {
+
+		    $book = Book::create( [
+			    'title'        => $this->input( 'title' ),
+			    'publisher_id' => $this->input( 'publisher' ),
+			    'published_at' => $this->input( 'publishedAt' ),
+			    'description' => $this->input( 'description' ),
+			    'isbn' => $this->input( 'isbn' )
+		    ] );
+
+		    $book->authors()->attach( $this->input( 'authors' ) );
+	    } );
+}
+```  
+
+    
+- custom messages
+
+```  
+	public function messages()
+	{
+		return [
+			'title.required' => 'I need a title, man :-(',
+			'publisher.integer'  => 'I need a publisher, man :-(',
+		];
+	}   
+```   
+
+
+
+
+
+```  
+```  
 
 ## Adding Authentication & Authorization 
 
@@ -1592,7 +1705,7 @@ DB::transaction( function () use ( $book, $request ) {
 - an admin can update a book
 - an admin can delete a book
 
-- an admin can update a book
+- an editor can update a book
 - nur description?!? can()
  
 
@@ -1626,7 +1739,7 @@ DB::transaction( function () use ( $book, $request ) {
 - PHPDoc
 - Tests
 
-
+- Cmds
 - Carbon
 
 ```  

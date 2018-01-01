@@ -13,7 +13,7 @@ class AddColumnsToBooks extends Migration {
 	public function up() {
 		Schema::table( 'books', function ( Blueprint $table ) {
 			$table->longText( 'description' )->nullable();
-			$table->string( 'isbn' , 10)->nullable();
+			$table->string( 'isbn' , 10)->nullable()->unique();
 		} );
 	}
 

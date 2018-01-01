@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
 use App\Publisher;
 use Illuminate\Http\Request;
 
@@ -34,9 +35,21 @@ class PublisherController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store( Request $request ) {
-		$this->validate( $request, [
-			'name' => 'required|min:1|max:121'
-		] );
+//		$this->validate( $request, [
+//			'name' => 'required|min:1|max:121'
+//		] );
+
+		// custom error-messages
+		$messages = [
+			'required' => 'The :attribute field is required.',
+//			'between' => 'The :attribute value :input is not between :min - :max.',
+			'name.between' => 'The name has to be between :min - :max characters long', // specific field
+		];
+
+		Validator::make($request->all(), [
+			'name' => 'required|between:1,121',
+		], $messages)->validate();
+
 
 		Publisher::create( [
 			'name' => $request->input( 'name' )
