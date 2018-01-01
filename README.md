@@ -1352,9 +1352,71 @@ notifyConfirm: function (cb) {
 },
 ```     
 
+## Alter a table
 
- 
- 
+### migration
+
+- alter the books-table by adding 2 columns
+    - description
+    - isbn
+
+
+```   
+php artisan make:migration add_columns_to_books --table="books"
+```     
+
+```   
+public function up() {
+    Schema::table( 'books', function ( Blueprint $table ) {
+        $table->longText( 'description' )->nullable();
+        $table->integer( 'isbn' )->nullable();
+    } );
+}
+
+/**
+ * Reverse the migrations.
+ *
+ * @return void
+ */
+public function down() {
+    Schema::table( 'books', function ( Blueprint $table ) {
+        $table->dropColumn( 'description' );
+        $table->dropColumn( 'isbn' );
+    } );
+}
+```   
+
+- check if everything works 
+- rollback, if cols are actually removed
+
+```   
+php artisan migrate
+php artisan migrate:rollback  
+php artisan migrate
+```   
+
+### views
+
+#### create
+
+
+
+#### edit
+
+
+## Adding Authentication & Authorization 
+
+- we gonna follow the best-pratice example from [laravel-news](https://laravel-news.com/authorization-gates)
+
+- herefore the **book**-table will be extended
+- also for authorization **role**- & a pivot **role-user**-table gonna be created
+
+- an admin can create a book
+- an admin can update a book
+- an admin can delete a book
+
+- an admin can update a book
+- nur description?!? can()
  
 
 ## TODO 

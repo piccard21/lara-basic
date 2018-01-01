@@ -1,4 +1,4 @@
-@if(count($errors))
+@if($errors->any())
 	<div class="container">
 		<div class="row">
 			<div class="col">
