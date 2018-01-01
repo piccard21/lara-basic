@@ -1613,7 +1613,7 @@ DB::transaction( function () use ( $book, $request ) {
 php artisan make:request BookStoreRequest
 ```  
 
-- copy rules over 
+- copy rules over from store() or update()
 
 ```  
 public function authorize()
@@ -1642,36 +1642,7 @@ public function rules()
 use App\Http\Requests\BookStoreRequest;
 ...
 	public function store( BookStoreRequest $request ) {
-		// moved to BookStoreRequest
-//		$this->validate( $request, [
-//			'title'       => 'required|min:1|max:121',
-//			'publisher'   => 'required|integer',
-//			'authors'   => 'required|array',
-//			'authors.*'   => 'required|integer',
-//			'description'   => 'nullable|string',
-//			'publishedAt' => 'nullable|date_format:"Y,m,d"',
-//			'isbn'   => 'nullable|digits:10'
-//		] );
-```  
-
-- moving logic to request-class 
-    - exchange $request with $this
-```  
-public function persist() {
-
-	    DB::transaction( function () {
-
-		    $book = Book::create( [
-			    'title'        => $this->input( 'title' ),
-			    'publisher_id' => $this->input( 'publisher' ),
-			    'published_at' => $this->input( 'publishedAt' ),
-			    'description' => $this->input( 'description' ),
-			    'isbn' => $this->input( 'isbn' )
-		    ] );
-
-		    $book->authors()->attach( $this->input( 'authors' ) );
-	    } );
-}
+		// moved to BookStoreRequest 
 ```  
 
     
@@ -1687,7 +1658,54 @@ public function persist() {
 	}   
 ```   
 
+- moving logic to request-class 
+    - exchange $request with $this
+```  
+public function store() {
 
+	    DB::transaction( function () {
+
+		    $book = Book::create( [
+			    'title'        => $this->input( 'title' ),
+			    'publisher_id' => $this->input( 'publisher' ),
+			    'published_at' => $this->input( 'publishedAt' ),
+			    'description' => $this->input( 'description' ),
+			    'isbn' => $this->input( 'isbn' )
+		    ] );
+
+		    $book->authors()->attach( $this->input( 'authors' ) );
+	    } );
+}
+
+public function update(Book $book) {
+
+    DB::transaction( function () use ( $book  ) {
+        $book->authors()->sync( $this->input( 'authors' ) );
+
+        $book->title        = $this->input( 'title' );
+        $book->publisher_id = $this->input( 'publisher' );
+        $book->published_at = $this->input( 'publishedAt' );
+        $book->description = $this->input( 'description' );
+        $book->isbn = $this->input( 'isbn' );
+        $book->save();
+    } );
+
+}
+```  
+
+- controller 
+```   
+public function store( BookStoreRequest $request ) { 
+    $request->store();
+    return redirect()->route( 'book.index' )->with( 'message', 'Book created successfully' );
+}
+
+
+public function update( BookStoreRequest $request, Book $book ) { 
+    $request->update($book);
+    return redirect()->route( 'book.index' )->with( 'message', 'Book updated successfully' );
+}
+```   
 
 
 

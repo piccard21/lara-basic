@@ -68,7 +68,7 @@ class BookController extends Controller {
 //			$book->authors()->attach( $request->input( 'authors' ) );
 //		} );
 
-		$request->persist();
+		$request->store();
 
 		return redirect()->route( 'book.index' )->with( 'message', 'Book created successfully' );
 	}
@@ -113,28 +113,29 @@ class BookController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update( Request $request, Book $book ) {
-		$this->validate( $request, [
-			'title'       => 'required|min:1|max:121',
-			'publisher'   => 'required|integer',
-			'authors'   => 'required|array',
-			'authors.*'   => 'required|integer',
-			'description'   => 'nullable|string',
-			'publishedAt' => 'nullable|date_format:"Y,m,d"',
-			'isbn'   => 'nullable|digits:10'
-		] );
+	public function update( BookStoreRequest $request, Book $book ) {
+//		$this->validate( $request, [
+//			'title'       => 'required|min:1|max:121',
+//			'publisher'   => 'required|integer',
+//			'authors'   => 'required|array',
+//			'authors.*'   => 'required|integer',
+//			'description'   => 'nullable|string',
+//			'publishedAt' => 'nullable|date_format:"Y,m,d"',
+//			'isbn'   => 'nullable|digits:10'
+//		] );
+//
+//		DB::transaction( function () use ( $book, $request ) {
+//			$book->authors()->sync( $request->input( 'authors' ) );
+//
+//			$book->title        = $request->input( 'title' );
+//			$book->publisher_id = $request->input( 'publisher' );
+//			$book->published_at = $request->input( 'publishedAt' );
+//			$book->description = $request->input( 'description' );
+//			$book->isbn = $request->input( 'isbn' );
+//			$book->save();
+//		} );
 
-		DB::transaction( function () use ( $book, $request ) {
-			$book->authors()->sync( $request->input( 'authors' ) );
-
-			$book->title        = $request->input( 'title' );
-			$book->publisher_id = $request->input( 'publisher' );
-			$book->published_at = $request->input( 'publishedAt' );
-			$book->description = $request->input( 'description' );
-			$book->isbn = $request->input( 'isbn' );
-			$book->save();
-		} );
-
+		$request->update($book);
 		return redirect()->route( 'book.index' )->with( 'message', 'Book updated successfully' );
 	}
 
