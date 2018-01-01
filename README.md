@@ -1706,18 +1706,13 @@ public function update( BookStoreRequest $request, Book $book ) {
     return redirect()->route( 'book.index' )->with( 'message', 'Book updated successfully' );
 }
 ```   
-
-
-
-```  
-```  
+ 
 
 ## Adding Authentication & Authorization 
 
 - we gonna follow the best-pratice example from [laravel-news](https://laravel-news.com/authorization-gates)
-
-- herefore the **book**-table will be extended
-- also for authorization **role**- & a pivot **role-user**-table gonna be created
+    - see there for code
+  
 
 - an admin can create a book
 - an admin can update a book
@@ -1725,7 +1720,25 @@ public function update( BookStoreRequest $request, Book $book ) {
 
 - an editor can update a book
 - nur description?!? can()
- 
+
+
+
+
+```  
+php artisan make:model Role -m
+php artisan make:migration create_role_users_table
+php artisan make:seeder RolesTableSeeder
+```  
+
+- Role.php
+- RolesTableSeeder.php
+- User.php
+- migration files
+
+```  
+composer dump-autoload
+php artisan migrate:refresh --seed
+``` 
 
 ## TODO 
 ```   
