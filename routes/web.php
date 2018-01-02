@@ -11,8 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get( '/', function () {
+	return view( 'welcome' );
+} )->name( 'home' );
 
-Route::get('/example', 'ExampleController@index')->name('example');
+//Route::get('/example', 'ExampleController@index')->name('example');
+
+
+Route::resource( '/example', 'ExampleController' );
+
+
+
+Route::resource( '/author', 'AuthorController' );
+Route::resource( '/book', 'BookController' );
+Route::resource( '/publisher', 'PublisherController' );
