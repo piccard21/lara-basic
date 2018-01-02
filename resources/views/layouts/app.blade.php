@@ -29,13 +29,13 @@
 <!-- main -->
 <div id="app">
 	<!-- navigation -->
-	@include('layout.nav')
+	@include('layouts.nav')
 
 	<!-- flash-messages -->
-	@include('layout.message')
+	@include('layouts.message')
 
 	<!-- errors -->
-	@include('layout.errors')
+	@include('layouts.errors')
 
 	<!-- content -->
 	@yield('content')
