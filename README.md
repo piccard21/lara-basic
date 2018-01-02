@@ -76,11 +76,11 @@ $font-size-base: 1rem;
 ## Layout-View 
 
 - create 
-	* **resources/views/layout/app.blade.php** 
+	* **resources/views/layouts/app.blade.php** 
 
 ### Main skeleton
 
-- in **layout/app.blade.php**
+- in **layouts/app.blade.php**
 
 ```
 <!DOCTYPE html>
@@ -105,13 +105,13 @@ $font-size-base: 1rem;
 <!-- main -->
 <div id="app">
 	<!-- navigation -->
-	@include('layouts.nav')
+	@include('layoutss.nav')
 
 	<!-- flash-messages -->
-	@include('layouts.message')
+	@include('layoutss.message')
 
 	<!-- errors -->
-	@include('layouts.errors')
+	@include('layoutss.errors')
 
 	<!-- content -->
 	@yield('content')
@@ -124,7 +124,7 @@ $font-size-base: 1rem;
 ```
 
 ### Errors & messages
-- layout/errors.blade.php
+- layouts/errors.blade.php
 
 ```
 @if(count($errors))
@@ -141,7 +141,7 @@ $font-size-base: 1rem;
     </div>
 @endif
 ```
-- layout/message.blade.php
+- layouts/message.blade.php
 
 ```
 @if ($flash = session('message'))
@@ -157,10 +157,10 @@ $font-size-base: 1rem;
 @endif
 ```
 
-- layout/nav.blade.php 
+- layouts/nav.blade.php 
 ```
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<a class="navbar-brand" href="{{ route("home") }}">Laravel Basic</a>
+	<a class="navbar-brand" href="{{ route("root") }}">Laravel Basic</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
@@ -198,7 +198,7 @@ php artisan make:controller ExampleController -r -m Example
 	- add BS4-code
 	
 ```
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
 	<div class="container">
@@ -364,7 +364,7 @@ php artisan db:seed
 - *example/index.blade.php*
 
 ```
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
 	<div class="container">
@@ -427,7 +427,7 @@ php artisan db:seed
 - *example/create.blade.php*
 
 ```
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
 	<div class="container">
@@ -457,7 +457,7 @@ php artisan db:seed
 - *example/edit.blade.php*
 
 ```
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
 	<div class="container">
@@ -486,7 +486,7 @@ php artisan db:seed
 - *example/show.blade.php*
 
 ```
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('content')
 	<div class="container">
@@ -992,7 +992,7 @@ public function store( Request $request ) {
 - Notifier-library, i.e. [iziToast](http://izitoast.marcelodolce.com/)
 - create ES6-helper-modules
 
-- **layout/app.blade.php**
+- **layouts/app.blade.php**
 	- for sake of simplicity, the loading-mask will be added via cdn
 	- the notifier will be installed via npm
 	
@@ -1710,10 +1710,6 @@ public function update( BookStoreRequest $request, Book $book ) {
 
 ## Adding Authentication & Authorization 
 
-- we gonna follow the best-pratice example from [laravel-news](https://laravel-news.com/authorization-gates)
-    - see there for code
-  
-
 - an admin can create a book
 - an admin can update a book
 - an admin can delete a book
@@ -1722,23 +1718,85 @@ public function update( BookStoreRequest $request, Book $book ) {
 - nur description?!? can()
 
 
-
-
+- follow the best-pratice example from [laravel-news](https://laravel-news.com/authorization-gates)
+    - see there for code starting at  
+ 
 ```  
 php artisan make:model Role -m
+```  
+```  
 php artisan make:migration create_role_users_table
+```  
+```  
 php artisan make:seeder RolesTableSeeder
 ```  
 
-- Role.php
-- RolesTableSeeder.php
-- User.php
-- migration files
+
+- edit
+    - Role.php
+    - RolesTableSeeder.php
+    - User.php
+    - migration files
 
 ```  
 composer dump-autoload
 php artisan migrate:refresh --seed
 ``` 
+
+
+- rename **app.blade.php**
+
+```  
+php artisan make:auth
+```  
+ 
+
+- Controllers/Auth/RegisterController.php
+- views/auth/register.blade.php  
+
+- adto **nav.blade**
+
+
+```  
+<!-- Right Side Of Navbar -->
+<ul class="nav navbar-nav">
+    <!-- Authentication Links -->
+    @guest
+        <li class="nav-item active"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
+    @else
+
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                User: {{ Auth::user()->name }} <span class="caret"></span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li>
+                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
+                </li>
+            </ul>
+        </li>
+    @endguest
+</ul>
+``` 
+
+- make old app to new one
+
+- login & register views have to be reformed to fit BS4
+
+### login
+
+
+### register
+
 
 ## TODO 
 ```   

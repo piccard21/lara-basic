@@ -8,7 +8,7 @@
 	<!-- CSRF Token -->
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
-	<title>{{ config('app.name', 'Bello') }}</title>
+	<title>{{ config('app.name', 'Lara-Basic') }}</title>
 
 	<!-- Styles -->
 	<link rel="shortcut icon" href="{{ asset('img/favicon.png')  }}">
