@@ -10,11 +10,13 @@
 			author ++  book +- publisher
 		</div>
 
-		<div class="mb-2">
-			<a class="btn btn-success" href="{{ route("book.create") }}">
-				<i class="fa fa-plus fa-lg"></i> Add
-			</a>
-		</div>
+		@can('create-book')
+			<div class="mb-2">
+				<a class="btn btn-success" href="{{ route("book.create") }}">
+					<i class="fa fa-plus fa-lg"></i> Add
+				</a>
+			</div>
+		@endcan
 
 		<div>
 			<ul class="list-group">

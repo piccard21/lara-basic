@@ -1714,7 +1714,7 @@ public function update( BookStoreRequest $request, Book $book ) {
 - an admin can update a book
 - an admin can delete a book
 
-- an editor can update a book
+- an user can update a book
 - nur description?!? can()
 
 
@@ -1796,6 +1796,74 @@ php artisan make:auth
 
 
 ### register
+
+
+- AuthServiceProvider
+
+```   
+public function boot()
+{
+    $this->registerPolicies();
+    $this->registerBookPolicies();
+
+    //
+}
+
+
+public function registerBookPolicies()
+{
+    Gate::define('create-book', function ($user) {
+        return $user->hasAccess(['create-book']);
+    });
+    Gate::define('update-book', function ($user, Book $book) {
+        return $user->hasAccess(['update-book']);
+    });
+    Gate::define('publish-book', function ($user) {
+        return $user->hasAccess(['publish-book']);
+    });
+    Gate::define('delete-book', function ($user) {
+        return $user->hasAccess(['delete-book']);
+    });
+//		Gate::define('delete-book', function ($user) {
+//			return $user->inRole('editor');
+//		});
+} 
+```     
+
+
+- route
+
+```     
+Route::group( [ 'prefix' => 'book' ], function () {
+
+	Route::get( '/', 'BookController@index' )
+	     ->name( 'book.index' )
+	     ->middleware( 'auth' );
+	Route::get( '/create', 'BookController@create' )
+	     ->name( 'book.create' )
+	     ->middleware( 'can:create-book' );
+	Route::post( '/', 'BookController@store' )
+	     ->name( 'book.store' )
+	     ->middleware( 'can:create-book' );
+	Route::get( '/{book}', 'BookController@show' )
+	     ->name( 'book.show' )
+	     ->middleware( 'auth' );
+	Route::get( '/{book}/edit', 'BookController@edit' )
+	     ->name( 'book.edit' )
+	     ->middleware( 'can:update-book,book' );
+	Route::put( '/{book}', 'BookController@update' )
+	     ->name( 'book.update' )
+	     ->middleware( 'can:update-book,book' );
+	Route::delete( '/{book}', 'BookController@destroy' )
+	     ->name( 'book.destroy' )
+	     ->middleware( 'can:destroy-book' );
+} );
+```     
+
+
+- book.index
+
+
 
 
 ## TODO 
