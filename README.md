@@ -2186,7 +2186,7 @@ public function drafts()
      
 
 
-####login & register views have to be reformed to fit BS4
+#### login & register views have to be reformed to fit BS4
 
 ##### login
 
@@ -2206,9 +2206,11 @@ protected $redirectTo = '/home';
   
 
 ## TODO 
+
 ```   
 php artisan make:policy PostPolicy --model=Post
-```     
+```   
+  
 
 
 -MethodNotAllowedHttpException
