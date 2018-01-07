@@ -12,18 +12,19 @@ class RolesTableSeeder extends Seeder
      */
 	public function run() {
 		$author = Role::create( [
-			'name'        => 'Author',
-			'slug'        => 'author',
+			'name'        => 'Admin',
+			'slug'        => 'admin',
 			'permissions' => [
-				'create-post' => true,
+				'create-book' => true,
+				'update-book'  => true,
+				'delete-book' => true,
 			]
 		] );
 		$editor = Role::create( [
-			'name'        => 'Editor',
-			'slug'        => 'editor',
+			'name'        => 'User',
+			'slug'        => 'user',
 			'permissions' => [
-				'update-post'  => true,
-				'publish-post' => true,
+				'update-book'  => true
 			]
 		] );
     }

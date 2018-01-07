@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+Use App\Role;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-Use App\Role;
 
 class RegisterController extends Controller {
 	/*
@@ -50,7 +50,7 @@ class RegisterController extends Controller {
 			'name'     => 'required|string|max:255',
 			'email'    => 'required|string|email|max:255|unique:users',
 			'password' => 'required|string|min:6|confirmed',
-			'role' => 'required|exists:roles,id', // validating role
+			'role'     => 'required|exists:roles,id', // validating role
 		] );
 	}
 
@@ -61,14 +61,14 @@ class RegisterController extends Controller {
 	 *
 	 * @return \App\User
 	 */
-	protected function create(array $data)
-	{
-		$user = User::create([
-			'name' => $data['name'],
-			'email' => $data['email'],
-			'password' => bcrypt($data['password']),
-		]);
-		$user->roles()->attach($data['role']);
+	protected function create( array $data ) {
+		$user = User::create( [
+			'name'     => $data['name'],
+			'email'    => $data['email'],
+			'password' => bcrypt( $data['password'] ),
+		] );
+		$user->roles()->attach( $data['role'] );
+
 		return $user;
 	}
 

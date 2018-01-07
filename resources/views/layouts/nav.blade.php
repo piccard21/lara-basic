@@ -19,6 +19,10 @@
                     <a class="dropdown-item" href="{{ route("author.index") }}">Author</a>
                     <a class="dropdown-item" href="{{ route("book.index") }}">Book</a>
                     <a class="dropdown-item" href="{{ route("publisher.index") }}">Publisher</a>
+
+                    @can('do-everything')
+                        <a class="dropdown-item" href="{{ route("publisher.index") }}">User Mangement</a>
+                    @endcan
                 </div>
             </li>
         </ul>

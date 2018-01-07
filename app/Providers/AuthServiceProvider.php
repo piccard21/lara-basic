@@ -33,20 +33,21 @@ class AuthServiceProvider extends ServiceProvider
 
 	public function registerBookPolicies()
 	{
+
+
+//		Gate::resource('book', 'BookController');
+
 		Gate::define('create-book', function ($user) {
 			return $user->hasAccess(['create-book']);
 		});
 		Gate::define('update-book', function ($user, Book $book) {
 			return $user->hasAccess(['update-book']);
 		});
-		Gate::define('publish-book', function ($user) {
-			return $user->hasAccess(['publish-book']);
-		});
-		Gate::define('delete-book', function ($user) {
+		Gate::define('delete-book', function ($user, Book $book) {
 			return $user->hasAccess(['delete-book']);
 		});
-//		Gate::define('delete-book', function ($user) {
-//			return $user->inRole('delete-book');
-//		});
+		Gate::define('do-everything', function ($user) {
+			return $user->inRole('admin');
+		});
 	}
 }

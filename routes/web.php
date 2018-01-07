@@ -29,8 +29,10 @@ Auth::routes();
 Route::get( '/home', 'HomeController@index' )->name( 'home' );
 
 
-Route::group( [ 'prefix' => 'book' ], function () {
+// The first is the name of the action we wish to authorize and the second is the route parameter we wish to pass to the policy method.
+// In this case, since we are using implicit model binding, a Book model will be passed to the policy method.                                                                                                                                                                                        Route::group( [ 'prefix' => 'book' ], function () {
 
+Route::group( [ 'prefix' => 'book' ], function () {
 	Route::get( '/', 'BookController@index' )
 	     ->name( 'book.index' )
 	     ->middleware( 'auth' );
@@ -46,12 +48,12 @@ Route::group( [ 'prefix' => 'book' ], function () {
 	Route::get( '/{book}/edit', 'BookController@edit' )
 	     ->name( 'book.edit' )
 	     ->middleware( 'can:update-book,book' );
-	Route::put( '/{book}', 'BookController@update' )
+	Route::patch( '/{book}', 'BookController@update' )
 	     ->name( 'book.update' )
 	     ->middleware( 'can:update-book,book' );
 	Route::delete( '/{book}', 'BookController@destroy' )
 	     ->name( 'book.destroy' )
-	     ->middleware( 'can:destroy-book' );
+	     ->middleware( 'can:destroy-book,book' );
 } );
 
 

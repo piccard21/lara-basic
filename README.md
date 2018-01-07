@@ -1833,42 +1833,69 @@ public function registerBookPolicies()
 
 - route
 
-```     
-Route::group( [ 'prefix' => 'book' ], function () {
+```            
+middleware( 'can:update-book,book' );
+```            
+- The first is the name of the action we wish to authorize and the second is the route parameter we wish to pass to the policy method.
+- In this case, since we are using implicit model binding, a Book model will be passed to the policy method.    
 
-	Route::get( '/', 'BookController@index' )
-	     ->name( 'book.index' )
-	     ->middleware( 'auth' );
-	Route::get( '/create', 'BookController@create' )
-	     ->name( 'book.create' )
-	     ->middleware( 'can:create-book' );
-	Route::post( '/', 'BookController@store' )
-	     ->name( 'book.store' )
-	     ->middleware( 'can:create-book' );
-	Route::get( '/{book}', 'BookController@show' )
-	     ->name( 'book.show' )
-	     ->middleware( 'auth' );
-	Route::get( '/{book}/edit', 'BookController@edit' )
-	     ->name( 'book.edit' )
-	     ->middleware( 'can:update-book,book' );
-	Route::put( '/{book}', 'BookController@update' )
-	     ->name( 'book.update' )
-	     ->middleware( 'can:update-book,book' );
-	Route::delete( '/{book}', 'BookController@destroy' )
-	     ->name( 'book.destroy' )
-	     ->middleware( 'can:destroy-book' );
-} );
+```      
+Route::get( '/', 'BookController@index' )
+     ->name( 'book.index' )
+     ->middleware( 'auth' );
+Route::get( '/create', 'BookController@create' )
+     ->name( 'book.create' )
+     ->middleware( 'can:create-book' );
+Route::post( '/', 'BookController@store' )
+     ->name( 'book.store' )
+     ->middleware( 'can:create-book' );
+Route::get( '/{book}', 'BookController@show' )
+     ->name( 'book.show' )
+     ->middleware( 'auth' );
+Route::get( '/{book}/edit', 'BookController@edit' )
+     ->name( 'book.edit' )
+     ->middleware( 'can:update-book,book' );
+Route::put( '/{book}', 'BookController@update' )
+     ->name( 'book.update,book' )
+     ->middleware( 'can:update-book,book' );
+Route::delete( '/{book}', 'BookController@destroy' )
+     ->name( 'book.destroy' )
+     ->middleware( 'can:destroy-book,book');
 ```     
 
 
 - book.index
 
+class Post extends Model
+{
+    protected $fillable = [
+        'title', 'slug', 'body', 'user_id',
+    ];
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('published', true);
+    }
+
+    public function scopeUnpublished($query)
+    {
+        return $query->where('published', false);
+    }
+}
 
 
 ## TODO 
 ```   
 ```     
+php artisan make:policy PostPolicy --model=Post
+-MethodNotAllowedHttpException
+- welches codes?!!?
+
 - update checkboxen bücher
 
 - validate array
@@ -1880,6 +1907,31 @@ Route::group( [ 'prefix' => 'book' ], function () {
     - migration alter  
 - Middle 
 - Events
+
+- scopes
+...
+
+class Post extends Model
+{
+    protected $fillable = [
+        'title', 'slug', 'body', 'user_id',
+    ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('published', true);
+    }
+
+    public function scopeUnpublished($query)
+    {
+        return $query->where('published', false);
+    }
+}
     
 - ServiceProvider
     - app/ app->extend
