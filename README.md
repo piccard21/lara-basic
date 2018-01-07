@@ -1710,17 +1710,12 @@ public function update( BookStoreRequest $request, Book $book ) {
 
 ## Adding Authentication & Authorization 
 
-- an admin can create a book
-- an admin can update a book
-- an admin can delete a book
-
-- an user can update a book
-- nur description?!? can()
-
-
-- follow the best-pratice example from [laravel-news](https://laravel-news.com/authorization-gates)
-    - see there for code starting at  
+- an admin can do-everything
+- an user can update-book
  
+
+- follow the example from [laravel-news](https://laravel-news.com/authorization-gates) 
+    
 ```  
 php artisan make:model Role -m
 ```  
@@ -1731,31 +1726,228 @@ php artisan make:migration create_role_users_table
 php artisan make:seeder RolesTableSeeder
 ```  
 
+### create_role_users_table
 
-- edit
-    - Role.php
-    - RolesTableSeeder.php
-    - User.php
-    - migration files
+```  
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateRoleUsersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+	    Schema::create('role_users', function (Blueprint $table) {
+		    $table->unsignedInteger('user_id');
+		    $table->unsignedInteger('role_id');
+		    $table->timestamps();
+
+		    $table->unique(['user_id','role_id']);
+		    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+		    $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+	    });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('role_users');
+    }
+}
+
+```  
+
+### create_roles_table
+
+```   
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateRolesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+	    Schema::create('roles', function (Blueprint $table) {
+		    $table->increments('id');
+		    $table->string('name');
+		    $table->string('slug')->unique();
+		    $table->jsonb('permissions'); // jsonb deletes duplicates
+		    $table->timestamps();
+	    });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('roles');
+    }
+}
+```  
+
+### Role.php
+
+``` 
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Role extends Model {
+	protected $fillable = [
+		'name',
+		'slug',
+		'permissions',
+	];
+	protected $casts = [
+		'permissions' => 'array',
+	];
+
+	public function users() {
+		return $this->belongsToMany( User::class, 'role_users' );
+	}
+
+	public function hasAccess( array $permissions ): bool {
+		foreach ( $permissions as $permission ) {
+			if ( $this->hasPermission( $permission ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function hasPermission( string $permission ): bool {
+		return $this->permissions[ $permission ] ?? false;
+	}
+}  
+```  
+
+### User.php
+
+```  
+class User extends Authenticatable
+{
+    use Notifiable;
+
+    protected $fillable = [
+        'name', 'email', 'password',
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_users');
+    }
+
+    /**
+     * Checks if User has access to $permissions.
+     */
+    public function hasAccess(array $permissions) : bool
+    {
+        // check if the permission is available in any role
+        foreach ($this->roles as $role) {
+            if($role->hasAccess($permissions)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the user belongs to role.
+     */
+    public function inRole(string $roleSlug)
+    {
+        return $this->roles()->where('slug', $roleSlug)->count() == 1;
+    }
+}
+```  
+
+### RolesTableSeeder.php
+``` 
+use App\Role;
+use Illuminate\Database\Seeder;
+
+class RolesTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+	public function run() {
+		$author = Role::create( [
+			'name'        => 'Admin',
+			'slug'        => 'admin',
+			'permissions' => [
+				'create-book' => true,
+				'update-book'  => true,
+				'delete-book' => true,
+			]
+		] );
+		$editor = Role::create( [
+			'name'        => 'User',
+			'slug'        => 'user',
+			'permissions' => [
+				'update-book'  => true
+			]
+		] );
+    }
+}
+
+``` 
+
+- add it also to **DatabaseSeeder** 
+ 
+``` 
+$this->call(\RolesSeeder::class);
+``` 
+ 
+### migrate
+
+```  
+php artisan migrate --seed
+```  
+
+
+
+### Auth
+
+
+- rename **app.blade.php** to **app.blade.php.BAK** or something (maybe the next command overwrites it)
+
+ 
+```  
+php artisan make:auth
+```  
 
 ```  
 composer dump-autoload
 php artisan migrate:refresh --seed
 ``` 
 
-
-- rename **app.blade.php**
-
-```  
-php artisan make:auth
-```  
- 
-
-- Controllers/Auth/RegisterController.php
-- views/auth/register.blade.php  
-
-- adto **nav.blade**
-
+### nav.blade
 
 ```  
 <!-- Right Side Of Navbar -->
@@ -1786,21 +1978,84 @@ php artisan make:auth
         </li>
     @endguest
 </ul>
+```  
+
+
+
+
+
+### auth/register.blade.php 
+
+- this is just from the example for demo, not needed in real life
+
+```  
+<div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
+    <label for="role" class="col-md-4 control-label">User role</label>
+
+    <div class="col-md-6">
+        <select id="role" class="form-control" name="role" required>
+            @foreach($roles as $id => $role)
+                <option value="{{$id}}">{{$role}}</option>
+            @endforeach
+        </select>
+
+        @if ($errors->has('role'))
+            <span class="help-block">
+                <strong>{{ $errors->first('role') }}</strong>
+            </span>
+        @endif
+    </div>
+</div>
+```  
+
+### Controllers/Auth/RegisterController.php
+
 ``` 
+...
+protected function validator( array $data ) {
+    return Validator::make( $data, [
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6|confirmed',
+        'role'     => 'required|exists:roles,id', // validating role
+    ] );
+}
 
-- make old app to new one
+/**
+ * Create a new user instance after a valid registration.
+ *
+ * @param  array $data
+ *
+ * @return \App\User
+ */
+protected function create( array $data ) {
+    $user = User::create( [
+        'name'     => $data['name'],
+        'email'    => $data['email'],
+        'password' => bcrypt( $data['password'] ),
+    ] );
+    $user->roles()->attach( $data['role'] );
 
-- login & register views have to be reformed to fit BS4
+    return $user;
+}
 
-### login
+public function showRegistrationForm() {
+    $roles = Role::orderBy( 'name' )->pluck( 'name', 'id' );
 
+    return view( 'auth.register', compact( 'roles' ) );
+} 
+```  
 
-### register
+### Run the Application
 
+- If you run a server using php artisan serve command you’ll be able to create a user and attach a role to it from the browser. 
+- Visit /register and create a new user.
 
-- AuthServiceProvider
+### Define policies
 
-```   
+#### AuthServiceProvider.php 
+
+```  
 public function boot()
 {
     $this->registerPolicies();
@@ -1811,83 +2066,94 @@ public function boot()
 
 
 public function registerBookPolicies()
-{
+{  
+
     Gate::define('create-book', function ($user) {
         return $user->hasAccess(['create-book']);
     });
     Gate::define('update-book', function ($user, Book $book) {
         return $user->hasAccess(['update-book']);
     });
-    Gate::define('publish-book', function ($user) {
-        return $user->hasAccess(['publish-book']);
-    });
-    Gate::define('delete-book', function ($user) {
+    Gate::define('delete-book', function ($user, Book $book) {
         return $user->hasAccess(['delete-book']);
     });
-//		Gate::define('delete-book', function ($user) {
-//			return $user->inRole('editor');
-//		});
-} 
-```     
-
-
-- route
-
-```            
-middleware( 'can:update-book,book' );
-```            
-- The first is the name of the action we wish to authorize and the second is the route parameter we wish to pass to the policy method.
-- In this case, since we are using implicit model binding, a Book model will be passed to the policy method.    
-
-```      
-Route::get( '/', 'BookController@index' )
-     ->name( 'book.index' )
-     ->middleware( 'auth' );
-Route::get( '/create', 'BookController@create' )
-     ->name( 'book.create' )
-     ->middleware( 'can:create-book' );
-Route::post( '/', 'BookController@store' )
-     ->name( 'book.store' )
-     ->middleware( 'can:create-book' );
-Route::get( '/{book}', 'BookController@show' )
-     ->name( 'book.show' )
-     ->middleware( 'auth' );
-Route::get( '/{book}/edit', 'BookController@edit' )
-     ->name( 'book.edit' )
-     ->middleware( 'can:update-book,book' );
-Route::put( '/{book}', 'BookController@update' )
-     ->name( 'book.update,book' )
-     ->middleware( 'can:update-book,book' );
-Route::delete( '/{book}', 'BookController@destroy' )
-     ->name( 'book.destroy' )
-     ->middleware( 'can:destroy-book,book');
-```     
-
-
-- book.index
-
-class Post extends Model
-{
-    protected $fillable = [
-        'title', 'slug', 'body', 'user_id',
-    ];
-
-    public function owner()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where('published', true);
-    }
-
-    public function scopeUnpublished($query)
-    {
-        return $query->where('published', false);
-    }
+    Gate::define('do-everything', function ($user) {
+        return $user->inRole('admin');
+    });
 }
+```  
 
+#### Routes 
+
+```   
+Route::group( [ 'prefix' => 'book' ], function () {
+	Route::get( '/', 'BookController@index' )
+	     ->name( 'book.index' )
+	     ->middleware( 'auth' );
+	Route::get( '/create', 'BookController@create' )
+	     ->name( 'book.create' )
+	     ->middleware( 'can:create-book' );
+	Route::post( '/', 'BookController@store' )
+	     ->name( 'book.store' )
+	     ->middleware( 'can:create-book' );
+	Route::get( '/{book}', 'BookController@show' )
+	     ->name( 'book.show' )
+	     ->middleware( 'auth' );
+	Route::get( '/{book}/edit', 'BookController@edit' )
+	     ->name( 'book.edit' )
+	     ->middleware( 'can:update-book,book' );
+	Route::patch( '/{book}', 'BookController@update' )
+	     ->name( 'book.update' )
+	     ->middleware( 'can:update-book,book' );
+	Route::delete( '/{book}', 'BookController@destroy' )
+	     ->name( 'book.destroy' )
+	     ->middleware( 'can:destroy-book,book' );
+```  
+
+
+
+### LoginController & RegisterController
+```  
+protected $redirectTo = '/home';
+```  
+
+### app.blade.php
+- mix up **app.blade.php.BAK** with thew new one, to fix your needs
+
+### Inside views and controllers adjust rights
+```   
+@can('create-book')
+    <div class="mb-2">
+        <a class="btn btn-success" href="{{ route("book.create") }}">
+            <i class="fa fa-plus fa-lg"></i> Add
+        </a>
+    </div>
+@endcan
+```  
+
+- this is just an example, we don't need right now
+```  
+public function drafts()
+{
+    $postsQuery = Post::unpublished();
+    if(Gate::denies('see-all-drafts')) {
+        $postsQuery = $postsQuery->where('user_id', Auth::user()->id);
+    }
+    $posts = $postsQuery->paginate();
+    return view('posts.drafts', compact('posts'));
+}
+```  
+     
+
+
+####login & register views have to be reformed to fit BS4
+
+##### login
+
+
+##### register
+
+   
 
 ## TODO 
 ```   
@@ -1909,6 +2175,10 @@ php artisan make:policy PostPolicy --model=Post
 - Events
 
 - scopes
+    public function scopePublished($query)
+    {
+        return $query->where('published', true);
+    }
 ...
 
 class Post extends Model
