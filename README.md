@@ -1635,7 +1635,7 @@ DB::transaction( function () use ( $book, $request ) {
 
 ### inside controller 
 
-- in ** PublisherController**
+- in **PublisherController**
 
 ```  
 	public function store( Request $request ) {
@@ -1656,7 +1656,7 @@ DB::transaction( function () use ( $book, $request ) {
 ```  
 
 
-###form request
+### form request
 
 ```  
 php artisan make:request BookStoreRequest
