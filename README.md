@@ -2207,24 +2207,18 @@ protected $redirectTo = '/home';
 
 ## TODO 
 ```   
-```     
 php artisan make:policy PostPolicy --model=Post
+```     
+
+
 -MethodNotAllowedHttpException
 - welches codes?!!?
-
-- update checkboxen bücher
-
-- validate array
-
-- busy-load import
-	- extract?!?!  
-	
-- Auth
-    - migration alter  
+  
 - Middle 
 - Events
 
 - scopes
+```     
     public function scopePublished($query)
     {
         return $query->where('published', true);
@@ -2252,17 +2246,15 @@ class Post extends Model
         return $query->where('published', false);
     }
 }
+```     
     
 - ServiceProvider
     - app/ app->extend
-    
-- Request-Class-Form
-- Error Msgs 
+     
 
 - model - special pivot table?
 - View::share
 - API
-- queryScopes
 - Language
 - multiple DBs
 - PHPDoc
@@ -2270,6 +2262,8 @@ class Post extends Model
 
 - Cmds
 - Carbon
+
+- Captain CRUD admin panel
 
 ```  
 		    return redirect()->back()->withErrors( [
