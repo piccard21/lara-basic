@@ -1580,11 +1580,60 @@ DB::transaction( function () use ( $book, $request ) {
 } );
 ```   
 
+## Template for HTTP-Errors
+
+- create **views/errors**
+- create **views/errors/error.php**
+```   
+@extends('layouts.app')
+
+@section('content')
+    {{--<div style="min-height: 100vh; background: oldlace;" class="d-flex align-items-center justify-content-center flex-column">--}}
+
+    <div class="container">
+        <div style="min-height: 100vh; background: oldlace;" class="d-flex align-items-center justify-content-center flex-column">
+
+            @yield('http-error')
+
+            <a href="{{ url()->previous() }}" class="btn btn-info">back</a>
+        </div>
+    </div>
+@endsection
+
+```   
+
+- create **views/errors/403.blade.php**
+```   
+@extends('errors.error')
+
+@section('http-error')
+            <h2>403</h2>
+            <p>
+                not authorized to perform the given action
+            </p>
+@endsection
+
+```   
+
+- create **views/errors/404.blade.php**
+```   
+@extends('errors.error')
+
+@section('http-error')
+        <h2>404</h2>
+        <p>
+            don't know the adress
+        </p>
+@endsection
+
+```   
+
+
 
 
 ## Custom Error Messages
 
-### simple: create validator manually
+### inside controller 
 
 - in ** PublisherController**
 
@@ -1607,7 +1656,7 @@ DB::transaction( function () use ( $book, $request ) {
 ```  
 
 
-## more complex: form request
+###form request
 
 ```  
 php artisan make:request BookStoreRequest
@@ -1708,13 +1757,11 @@ public function update( BookStoreRequest $request, Book $book ) {
 ```   
  
 
-## Adding Authentication & Authorization 
-
-- an admin can do-everything
-- an user can update-book
+## Authentication & Authorization 
+- first it will be shown how to do it manually, the a package is used
  
-
-- follow the example from [laravel-news](https://laravel-news.com/authorization-gates) 
+### Manually 
+- follows (more or less) the example from [laravel-news](https://laravel-news.com/authorization-gates) 
     
 ```  
 php artisan make:model Role -m
@@ -1726,7 +1773,7 @@ php artisan make:migration create_role_users_table
 php artisan make:seeder RolesTableSeeder
 ```  
 
-### create_role_users_table
+#### create_role_users_table
 
 ```  
 use Illuminate\Support\Facades\Schema;
@@ -1766,7 +1813,7 @@ class CreateRoleUsersTable extends Migration
 
 ```  
 
-### create_roles_table
+#### create_roles_table
 
 ```   
 use Illuminate\Support\Facades\Schema;
@@ -1803,7 +1850,7 @@ class CreateRolesTable extends Migration
 }
 ```  
 
-### Role.php
+#### Role.php
 
 ``` 
 namespace App;
@@ -1840,7 +1887,7 @@ class Role extends Model {
 }  
 ```  
 
-### User.php
+#### User.php
 
 ```  
 class User extends Authenticatable
@@ -1884,7 +1931,7 @@ class User extends Authenticatable
 }
 ```  
 
-### RolesTableSeeder.php
+#### RolesTableSeeder.php
 ``` 
 use App\Role;
 use Illuminate\Database\Seeder;
@@ -1924,7 +1971,7 @@ class RolesTableSeeder extends Seeder
 $this->call(\RolesSeeder::class);
 ``` 
  
-### migrate
+#### migrate
 
 ```  
 php artisan migrate --seed
@@ -1932,10 +1979,10 @@ php artisan migrate --seed
 
 
 
-### Auth
+#### Auth
 
 
-- rename **app.blade.php** to **app.blade.php.BAK** or something (maybe the next command overwrites it)
+- rename **app.blade.php** to **app.blade.php.BAK** or something (the next command creates a new one)
 
  
 ```  
@@ -1947,7 +1994,7 @@ composer dump-autoload
 php artisan migrate:refresh --seed
 ``` 
 
-### nav.blade
+#### nav.blade
 
 ```  
 <!-- Right Side Of Navbar -->
@@ -1984,7 +2031,7 @@ php artisan migrate:refresh --seed
 
 
 
-### auth/register.blade.php 
+#### auth/register.blade.php 
 
 - this is just from the example for demo, not needed in real life
 
@@ -2008,7 +2055,7 @@ php artisan migrate:refresh --seed
 </div>
 ```  
 
-### Controllers/Auth/RegisterController.php
+#### Controllers/Auth/RegisterController.php
 
 ``` 
 ...
@@ -2046,14 +2093,14 @@ public function showRegistrationForm() {
 } 
 ```  
 
-### Run the Application
+#### run the application
 
 - If you run a server using php artisan serve command you’ll be able to create a user and attach a role to it from the browser. 
 - Visit /register and create a new user.
 
-### Define policies
+#### define policies
 
-#### AuthServiceProvider.php 
+##### AuthServiceProvider.php 
 
 ```  
 public function boot()
@@ -2110,17 +2157,10 @@ Route::group( [ 'prefix' => 'book' ], function () {
 	     ->middleware( 'can:destroy-book,book' );
 ```  
 
-
-
-### LoginController & RegisterController
-```  
-protected $redirectTo = '/home';
-```  
-
-### app.blade.php
+#### app.blade.php
 - mix up **app.blade.php.BAK** with thew new one, to fix your needs
 
-### Inside views and controllers adjust rights
+#### Inside views and controllers adjust rights
 ```   
 @can('create-book')
     <div class="mb-2">
@@ -2152,8 +2192,18 @@ public function drafts()
 
 
 ##### register
+ 
 
-   
+#### LoginController & RegisterController
+```  
+protected $redirectTo = '/home';
+```  
+  
+- no usermanagement is shown here, see the sourcecode  
+  
+
+### Package: Bouncer   
+  
 
 ## TODO 
 ```   
