@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    {{--<div style="min-height: 100vh; background: oldlace;" class="d-flex align-items-center justify-content-center flex-column">--}}
-
     <div class="container">
         <div style="min-height: 100vh; background: oldlace;" class="d-flex align-items-center justify-content-center flex-column">
 
