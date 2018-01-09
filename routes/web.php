@@ -65,3 +65,6 @@ Route::group( [ 'prefix' => 'book' ], function () {
 //|        | PUT|PATCH | book/{book}                  | book.update          | App\Http\Controllers\BookController@update                             | web                                          |
 //|        | DELETE    | book/{book}                  | book.destroy         | App\Http\Controllers\BookController@destroy                            | web                                          |
 //|        | GET|HEAD  | book/{book}/edit             | book.edit            | App\Http\Controllers\BookController@edit                               | web                                          |
+
+
+Route::resource( '/user', 'UserController' );

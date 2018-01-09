@@ -21,7 +21,7 @@
                     <a class="dropdown-item" href="{{ route("publisher.index") }}">Publisher</a>
 
                     @can('do-everything')
-                        <a class="dropdown-item" href="{{ route("publisher.index") }}">User Mangement</a>
+                        <a class="dropdown-item" href="{{ route("user.index") }}">User Mangement</a>
                     @endcan
                 </div>
             </li>

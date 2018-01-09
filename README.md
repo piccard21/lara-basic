@@ -2283,6 +2283,12 @@ php artisan make:policy PostPolicy --model=Post
 ```   
   
 
+- UserRequest
+- validation of create/update eigentlich zentral in Auth ... aber wo????
+- password nicht updaten bzw default
+- default role
+
+
 
 -MethodNotAllowedHttpException
 - welches codes?!!?
