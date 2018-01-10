@@ -6,6 +6,7 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller {
 	/**
@@ -14,9 +15,15 @@ class UserController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
-		$users = User::orderBy( 'name', 'asc' )->paginate( 10 );
 
-		return view( 'user.index' )->with( 'users', $users );
+		// get current logged in user
+		$user = auth()->user();
+		$this->authorize('view', User::class );
+//		if ( Gate::allows( 'users.view', User::class ) ) {
+//		if ( $user->can( 'users.view', User::class ) ) {
+			$users = User::orderBy( 'name', 'asc' )->paginate( 10 );
+			return view( 'user.index' )->with( 'users', $users );
+//		}
 	}
 
 	/**
@@ -25,11 +32,11 @@ class UserController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create() {
-		$roles    = Role::orderBy( 'name', 'asc' )->get();
+		$roles = Role::orderBy( 'name', 'asc' )->get();
 
-	    return view( 'user.create' )->with( [
-		    'roles' => $roles
-	    ] );
+		return view( 'user.create' )->with( [
+			'roles' => $roles
+		] );
 	}
 
 	/**
@@ -65,10 +72,11 @@ class UserController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit(  User $user  ) {
-		$roles    = Role::orderBy( 'name', 'asc' )->get();
+	public function edit( User $user ) {
+		$roles = Role::orderBy( 'name', 'asc' )->get();
+
 		return view( 'user.edit' )->with( [
-			'user' => $user,
+			'user'  => $user,
 			'roles' => $roles
 		] );
 	}
@@ -81,8 +89,8 @@ class UserController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update( UserRequest $user_request, User $user  ) {
-		$user_request->update($user);
+	public function update( UserRequest $user_request, User $user ) {
+		$user_request->update( $user );
 
 		return redirect()->route( 'user.index' )->with( 'message', 'User updated successfully' );
 	}
@@ -98,10 +106,10 @@ class UserController extends Controller {
 		$user->delete();
 
 		$result = [
-			'success' => TRUE,
-			'message' => __('User successfully deleted.')
+			'success' => true,
+			'message' => __( 'User successfully deleted.' )
 		];
 
-		return response()->json($result);
+		return response()->json( $result );
 	}
 }

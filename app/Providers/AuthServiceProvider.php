@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Book;
+use App\User;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -15,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -27,16 +30,12 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 	    $this->registerBookPolicies();
 
-        //
+	    Gate::resource('users', 'App\Policies\UserPolicy');
     }
 
 
 	public function registerBookPolicies()
 	{
-
-
-//		Gate::resource('book', 'BookController');
-
 		Gate::define('create-book', function ($user) {
 			return $user->hasAccess(['create-book']);
 		});

@@ -66,5 +66,11 @@ Route::group( [ 'prefix' => 'book' ], function () {
 //|        | DELETE    | book/{book}                  | book.destroy         | App\Http\Controllers\BookController@destroy                            | web                                          |
 //|        | GET|HEAD  | book/{book}/edit             | book.edit            | App\Http\Controllers\BookController@edit                               | web                                          |
 
+//Route::put('/post/{post}', function (Post $post) {
+//	// The current user may update the post...
+//})->middleware('can:update,post');
+//
+//Route::group( [ 'prefix' => 'book' ], function () {
 
 Route::resource( '/user', 'UserController' );
+//Route::resource( '/user', 'UserController' )->middleware('can:users.view,user');
