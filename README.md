@@ -2276,6 +2276,126 @@ protected $redirectTo = '/home';
 ### Package: Bouncer   
   
 
+
+
+## Resources
+
+```   
+php artisan make:resource DomainBaseDrop
+php artisan make:resource DomainBaseDropCollection
+```
+
+
+```   
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\Resource;
+
+class DomainBaseDrop extends Resource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+//        return parent::toArray($request);
+	    
+	    return [
+		    'id' => $this->id,
+		    'sld' => $this->sld,
+		    'tld' => $this->tld,
+		    'subtld' => $this->subtld,
+		    // if there are relationships, like hasUser
+//		    'user' => $this->user
+	        // or just 1 value of it
+//		    'user' => $this->user->name
+			// if there is no user
+//		    'user' => optional($this->user)->name
+	    ];
+    }
+    
+//	public function with($request)
+//	{
+//		return [
+//			'status' => 'success'
+//		];
+//	}
+}
+```   
+
+
+```   
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class DomainBaseDropCollection extends ResourceCollection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function toArray($request)
+    {
+//        return parent::toArray($request);
+	
+	    return [
+		    'data' => $this->collection,
+//		    'foo' => 'bar',
+//		    'status' => 'success',
+	    ];
+    }
+    
+}
+```   
+
+### route
+
+```   
+Route::prefix('import/restore')->group(function() {
+	Route::get('/', function() {
+		// $dbds = DomainBaseDrop::get();
+	    $dbds = DomainBaseDrop::paginate(3);
+	    // use it like that: http://127.0.0.1:8000/api/import/restore?page=3
+	    return new DomainBaseDropCollectionResource($dbds);
+	});
+	Route::get('/{id}', function(DomainBaseDrop $id) {
+		return new DomainbaseDropResource($id);
+	});
+});
+```   
+
+### playaround
+
+```   
+    	// SINGLE
+	    $dbd = DomainBaseDrop::first();
+	    // falls beziehung da:
+//	    DomainBaseDrop::with('user')->first();
+	    return new DomainbaseDropResource($dbd);
+	
+	
+	    // COLLECTION
+//	    $dbds = DomainBaseDrop::get();
+//	    $dbds = DomainBaseDrop::paginate(3);
+//	    return DomainbaseDropResource::collection($dbds);
+//	    or
+//	    return new DomainBaseDropCollectionResource($dbds);
+	    
+    	
+//	    return view('restore.index', []);
+    }
+```   
+
+
+
+
+
 ## TODO 
 
 ```   
