@@ -2278,7 +2278,7 @@ protected $redirectTo = '/home';
 
 
 
-## Resources
+## API-Resources
 
 ```   
 php artisan make:resource DomainBaseDrop
@@ -2370,7 +2370,7 @@ Route::prefix('import/restore')->group(function() {
 });
 ```   
 
-### playaround
+### playground
 
 ```   
     	// SINGLE
@@ -2392,7 +2392,11 @@ Route::prefix('import/restore')->group(function() {
     }
 ```   
 
-
+### HTTP-Status-Code
+```   
+$resource = new UserResource($user);
+return $resource->response()->setStatusCode(200);
+```   
 
 
 
