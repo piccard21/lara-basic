@@ -2473,3 +2473,15 @@ class Post extends Model
 			    "message" => "Author couldn't be updated"
 		    ] );
 ```  
+
+
+
+# Flexbox
+
+- [Laracasts - centered logo](https://laracasts.com/series/learn-flexbox-through-examples/episodes/1)
+
+# JS-Plugin
+
+- [PHP-Vars-To-Js-Transformer](https://github.com/laracasts/PHP-Vars-To-Js-Transformer)
+- [laroute](https://github.com/aaronlord/laroute)
+
