@@ -2481,6 +2481,11 @@ class Post extends Model
 - [Laracasts - centered logo](https://laracasts.com/series/learn-flexbox-through-examples/episodes/1)
 
 # JS-Plugin
+```  
+<script>
+	window.ix_domainList = {!! json_encode($domains) !!};
+</script>
+```  
 
 - [PHP-Vars-To-Js-Transformer](https://github.com/laracasts/PHP-Vars-To-Js-Transformer)
 - [laroute](https://github.com/aaronlord/laroute)
