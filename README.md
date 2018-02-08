@@ -2490,3 +2490,6 @@ class Post extends Model
 - [PHP-Vars-To-Js-Transformer](https://github.com/laracasts/PHP-Vars-To-Js-Transformer)
 - [laroute](https://github.com/aaronlord/laroute)
 
+# HTTP_STATUS_CODE
+- symfony/http-foundation/Response.php
+
