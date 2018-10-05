@@ -4,13 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Author extends Model
-{
-	protected $fillable = ['lastname','forename'];
-	
-	public function books()
-	{
+class Author extends Model {
+	protected $fillable = ['lastname', 'forename'];
+
+	public function books() {
 		return $this->belongsToMany('App\Book');
 	}
-	
+	public function getFullNameAttribute() {
+		return $this->forename . ' ' . $this->lastname;
+	}
 }

@@ -2,7 +2,6 @@
 
 @section('content')
 	<div class="container">
-
 		<div class="jumbotron jumbo-custom">
 			<h1 class="display-4">Book</h1>
 			<hr>
@@ -21,9 +20,14 @@
 				@foreach($books as $book)
 					<li class="list-group-item">
 						<div class="d-flex align-items-center">
-                            <span class="mr-auto">
-                            {{ $book->title }}
-                            </span>
+							<div class="mr-auto">
+	                            {{ $book->title }}
+	                            <br>
+                            	<small class="text-secondary">Authors: {{ $book->authors->pluck('full_name')->implode(', ') }}</small>
+	                            <br>
+                            	<small class="text-secondary">Publisher: {{ $book->publisher->name }}</small>
+							</div>
+                            <span>
 							<span>
 								<a class="btn btn-warning"
 								   href="{{ route("book.edit", ["book" => $book->id]) }}">
