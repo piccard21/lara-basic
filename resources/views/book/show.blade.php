@@ -2,7 +2,6 @@
 
 @section('content')
 	<div class="container">
-
 		<div class="jumbotron jumbo-custom">
 			<h1 class="display-4">Book </h1>
 			<hr>
@@ -14,7 +13,6 @@
 				<h2>{{ $book->title }}</h2>
 			</div>
 		</div>
-
 
 		<div class="row">
 			<div class="col-sm">
