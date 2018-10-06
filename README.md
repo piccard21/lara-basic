@@ -1580,6 +1580,39 @@ DB::transaction( function () use ( $book, $request ) {
 } );
 ```   
 
+## QueryScope & -attribute
+- Model/Book.php
+
+```   
+public function scopeWithAll($query) {
+	$query->with(['authors', 'publisher']);
+	// or store them in protected variable - whatever you prefer
+	// the latter would be the way if you want to have the method
+	// in your BaseModel. Then simply define it as [] there and use:
+	// $query->with($this->allRelations);
+}
+```   
+
+```    
+Book::withAll()->orderBy('title', 'asc')->paginate(10);
+```   
+ 
+- Model/Author.php
+
+```   
+public function getFullNameAttribute() {
+	return $this->forename . ' ' . $this->lastname;
+}
+```
+
+- Now use it i.e. in a template
+
+```   
+{{ $book->authors->pluck('full_name')->implode(', ') }}
+```   
+
+
+
 
 
 ## Custom Error Messages
