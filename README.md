@@ -1597,7 +1597,7 @@ public function scopeWithAll($query) {
 Book::withAll()->orderBy('title', 'asc')->paginate(10);
 ```   
  
-- Model/Author.php
+* Model/Author.php
 
 ```   
 public function getFullNameAttribute() {
@@ -1605,7 +1605,7 @@ public function getFullNameAttribute() {
 }
 ```
 
-- Now use it i.e. in a template
+* Now use it i.e. in a template
 
 ```   
 {{ $book->authors->pluck('full_name')->implode(', ') }}
@@ -1619,7 +1619,7 @@ public function getFullNameAttribute() {
 
 ### simple: create validator manually
 
-- in ** PublisherController**
+- in **PublisherController**
 
 ```  
 	public function store( Request $request ) {
@@ -1766,9 +1766,6 @@ public function update( BookStoreRequest $request, Book $book ) {
 - update checkboxen bücher
 
 - validate array
-
-- busy-load import
-	- extract?!?!  
 	
 - Auth
     - migration alter  
@@ -1779,12 +1776,10 @@ public function update( BookStoreRequest $request, Book $book ) {
     - app/ app->extend
     
 - Request-Class-Form
-- Error Msgs 
 
 - model - special pivot table?
 - View::share
 - API
-- queryScopes
 - Language
 - multiple DBs
 - PHPDoc
